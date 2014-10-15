@@ -95,10 +95,13 @@ class StringBasedNtupleFiller : public NtupleFillerBase {
 #include "ZSV/BAnalysis/interface/SimBHadron.h"
 #include "UWAnalysis/RecoTools/plugins/PATJetOverloader.h"
 #include "UWAnalysis/DataFormats/interface/BCandFinalState.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "UWAnalysis/DataFormats/interface/DressedLepton.h"
 
 typedef StringBasedNtupleFiller<BCandFinalState> bCandidatesFiller; 
 typedef StringBasedNtupleFiller<SimBHadron> SimBHadronsFiller;
 typedef StringBasedNtupleFiller<reco::GenParticle> PATGenParticleFiller;
+typedef StringBasedNtupleFiller<DressedLepton> DressedLeptonFiller;
 typedef StringBasedNtupleFiller<PATMuTauPair> PATMuTauPairFiller;
 typedef StringBasedNtupleFiller<PATMuJetPair> PATMuJetPairFiller;
 typedef StringBasedNtupleFiller<PATDiTauPair> PATDiTauPairFiller;
@@ -107,10 +110,13 @@ typedef StringBasedNtupleFiller<PATElecMuPair> PATEleMuPairFiller;
 typedef StringBasedNtupleFiller<PATElecPair> PATElePairFiller;
 typedef StringBasedNtupleFiller<PATMuonNuPair> PATMuonNuPairFiller;
 typedef StringBasedNtupleFiller<PATCandNuPair> PATCandNuPairFiller;
+typedef StringBasedNtupleFiller<PATElectronNuPair> PATElectronNuPairFiller;
 typedef StringBasedNtupleFiller<PATMuTrackPair> PATMuTrackPairFiller;
 typedef StringBasedNtupleFiller<PATEleTrackPair> PATEleTrackPairFiller;
 typedef StringBasedNtupleFiller<PATMuPair> PATMuPairFiller;
 typedef StringBasedNtupleFiller<PATJetPair> PATJetPairFiller;
+typedef StringBasedNtupleFiller<reco::GenJet> GENJetFiller;
+typedef StringBasedNtupleFiller<pat::Jet> PATJetFiller;
 typedef StringBasedNtupleFiller<pat::Muon> PATMuonFiller;
 typedef StringBasedNtupleFiller<pat::Electron> PATElectronFiller;
 typedef StringBasedNtupleFiller<reco::MET> PATMETFiller;
