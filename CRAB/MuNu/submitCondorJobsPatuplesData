@@ -1,25 +1,23 @@
 #!/bin/sh
-voms-proxy-init --voms cms --valid 100:00
-
-version="post_synch_v5"
+#voms-proxy-init --voms cms --valid 100:00
 
 cat MNu-Pat_Data.py  > MuNuPATDat.py
 cat CONDOR_DATA.py >> MuNuPATDat.py
 
 farmoutAnalysisJobs --input-files-per-job=1 --shared-fs --memory-requirements=3000 \
-  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mverzett/SingleMu/Run2012A-22Jan2013-v1/AOD/Spring2014PATTuples_v2/ \
+  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/SingleMu/Run2012A-22Jan2013-v1/AOD/Spring2014PATTuples_v3/ \
   ${version}_DataA_8TeV $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPATDat.py
 
 farmoutAnalysisJobs --input-files-per-job=1 --shared-fs --memory-requirements=3000 \
-  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mverzett/SingleMu/Run2012B-22Jan2013-v1/AOD/Spring2014PATTuples_v2/ \
+  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/SingleMu/Run2012B-22Jan2013-v1/AOD/Spring2014PATTuples_v3/ \
   ${version}_DataB_8TeV $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPATDat.py
 
 farmoutAnalysisJobs --input-files-per-job=1 --shared-fs --memory-requirements=3000 \
-  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/ \
+  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples_v3/ \
   ${version}_DataC_8TeV $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPATDat.py
 
 farmoutAnalysisJobs --input-files-per-job=1 --shared-fs --memory-requirements=3000 \
-  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012D-22Jan2013-v1/AOD/Spring2014PATTuples/ \
+  --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/SingleMu/Run2012D-22Jan2013-v1/AOD/Spring2014PATTuples_v3/ \
   ${version}_DataD_8TeV $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPATDat.py
 
 rm MuNuPATDat.py

@@ -82,15 +82,16 @@ void PATCSVVertex::produce(edm::Event& evt, const edm::EventSetup& es) {
                 vertexPt2 =math::XYZVector(dir.x(), dir.y(), dir.z()).Cross(weightedVertexSum).Mag2() / dir.mag2();
                 correctedVertexMass=std::sqrt(sumWeightedVertexMass*sumWeightedVertexMass+vertexPt2) + std::sqrt(vertexPt2);
          }
-//        jet.addUserFloat("mass_SV_unweighted",sumVertexMass);
-//        jet.addUserFloat("mass_SV_weighted",sumWeightedVertexMass);
-//        jet.addUserFloat("pt_SV_unweighted",sumVertexPt);
-//        jet.addUserFloat("pt_SV_weighted",sumWeightedVertexPt);
-//        jet.addUserFloat("normChi2_SV",quality);
-//        jet.addUserFloat("sumOfWeights_SV",sumWeights);
-//        jet.addUserFloat("nTracks_SV",numberTracks);
-//        jet.addUserFloat("mass_SV_corrected",correctedVertexMass);
-//        jet.addUserFloat("mass_SV_correctin",vertexPt2);
+        jet.addUserFloat("mass_SV_unweighted",sumVertexMass);
+        jet.addUserFloat("pt_SV_unweighted",sumVertexPt);
+        jet.addUserFloat("mass_SV_weighted",sumWeightedVertexMass);
+        jet.addUserFloat("pt_SV_weighted",sumWeightedVertexPt);
+        jet.addUserFloat("mass_SV_corrected",correctedVertexMass);
+
+        jet.addUserFloat("normChi2_SV",quality);
+        jet.addUserFloat("sumOfWeights_SV",sumWeights);
+        jet.addUserFloat("nTracks_SV",numberTracks);
+        jet.addUserFloat("mass_SV_correctin",vertexPt2);
 
         out->push_back(jet);
 

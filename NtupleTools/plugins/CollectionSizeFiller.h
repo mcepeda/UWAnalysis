@@ -21,6 +21,21 @@
 
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"
 
+#include "DataFormats/Common/interface/RefToBase.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/Common/interface/OwnVector.h"
+#include "DataFormats/Common/interface/Ref.h"
+#include "DataFormats/Common/interface/Ptr.h"
+#include "DataFormats/Common/interface/RefProd.h"
+#include "DataFormats/Common/interface/RefVector.h"
+#include "DataFormats/Common/interface/PtrVector.h"
+#include "DataFormats/Common/interface/RefToBase.h"
+#include "DataFormats/Common/interface/RefToBaseVector.h"
+#include "DataFormats/Common/interface/RefToBaseProd.h"
+#include "DataFormats/Common/interface/View.h"
+
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"
+
 #include "UWAnalysis/NtupleTools/interface/NtupleFillerBase.h"
 
 //

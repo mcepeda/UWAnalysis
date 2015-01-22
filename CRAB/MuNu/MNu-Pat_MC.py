@@ -13,14 +13,11 @@ process.maxEvents = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
  fileNames = cms.untracked.vstring(
-  # $inputFileNames
-  #'file:/afs/hep.wisc.edu/cms/tperry/FSAv2_CMSSW_5_3_14/src/FinalStateAnalysis/PatTools/test/mc.root'
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM/Spring2014PATTuples/patTuple_cfg-FEE55DEF-22F0-E111-9F78-001E67398633.root'
-#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTupleV2/patTuple_cfg-FC989FB7-1907-E211-A0C3-001E67396ACC.root'
-#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/W4JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTupleV2/patTuple_cfg-FC84B460-AC06-E211-9731-003048678B38.root'
-#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples/patTuple_cfg-02A0D7CE-75E4-E211-9EBB-002618943800.root'
-#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTupleV2/patTuple_cfg-FC989FB7-1907-E211-A0C3-001E67396ACC.root'
-#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTupleV2/patTuple_cfg-F8EF9511-5BEF-E211-92AA-0030487E5399.root'
+"root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/AODSIM/Fall2014PATTuples_V1/patTuple_cfg-00277FF2-7B84-E211-9475-782BCB27B958.root",
+#"root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/AODSIM/Fall2014PATTuples_V1/patTuple_cfg-5ACBC7A4-7D84-E211-A0B6-782BCB27B958.root",
+#"root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/AODSIM/Fall2014PATTuples_V1/patTuple_cfg-AED5F4C3-6E84-E211-B83B-0002C90EEE6E.root",
+#"root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/AODSIM/Fall2014PATTuples_V1/patTuple_cfg-002D70FC-7F84-E211-A7E6-782BCB6E0938.root",
+#"root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/AODSIM/Fall2014PATTuples_V1/patTuple_cfg-5ADB775B-A284-E211-B0A2-90B11C18B19E.root",
  ),
  inputCommands=cms.untracked.vstring(
   'keep *',
@@ -38,7 +35,7 @@ from UWAnalysis.Configuration.tools.analysisToolsPT import *
 
 defaultReconstructionPT(process,
  'HLT',
- ['HLT_IsoMu24_eta2p1_v','HLT_Mu40_eta2p1_v'],
+ ['HLT_IsoMu24_eta2p1_v','HLT_Mu40_eta2p1_v','HLT_Ele27_WP80'],
  itsMC=True,itsData=False)
 
 createGeneratedParticles(process,
@@ -73,27 +70,96 @@ process.selectionSequenceMuonUp    = createSystematics(process,process.selection
 process.selectionSequenceMuonDown  = createSystematics(process,process.selectionSequence,'MuonDown',0.99, 1.0, 1.0, 0, 1.0)
 process.selectionSequenceJetUp     = createSystematics(process,process.selectionSequence,'JetUp'   ,1.00, 1.0, 1.0, 1, 1.0)
 process.selectionSequenceJetDown   = createSystematics(process,process.selectionSequence,'JetDown' ,1.00, 1.0, 1.0,-1, 1.0)
-process.selectionSequenceUCEUp     = createSystematics(process,process.selectionSequence,'UCEUp'   ,1.00, 1.0, 1.0, 0, 1.1)
-process.selectionSequenceUCEDown   = createSystematics(process,process.selectionSequence,'UCEDown' ,1.00, 1.0, 1.0, 0, 0.9)
 
 process.eventSelectionMuonUp    =  cms.Path(process.selectionSequenceMuonUp)
 process.eventSelectionMuonDown  =  cms.Path(process.selectionSequenceMuonDown)
 process.eventSelectionJetUp     =  cms.Path(process.selectionSequenceJetUp)
 process.eventSelectionJetDown   =  cms.Path(process.selectionSequenceJetDown)
-process.eventSelectionUCEUp     =  cms.Path(process.selectionSequenceUCEUp)
-process.eventSelectionUCEDown   =  cms.Path(process.selectionSequenceUCEDown)
 
-from UWAnalysis.Configuration.tools.ntupleToolsPTwbb import *
-addMuNuEventTreePtMC(process,'muNuEventTree',lhep="source")
+from UWAnalysis.Configuration.tools.ntupleToolsPTwbbClean import *
+addEventTreeMC(process,'muEleEventTree',
+      srcGMu='smearedGoodMuons',
+      srcVMu='smearedVetoMuons',
+      srcQMu='smearedQCDMuons',
+      srcAMu='smearedAllMuons',
+      srcGEle='smearedGoodElectrons',
+      srcVEle='smearedVetoElectrons',
+      srcQEle='smearedQCDElectrons',
+      srcAEle='smearedAllElectrons',
+      srcGJet='smearedGoodJets',
+      srcFJet='smearedFwdJets',
+      srcAJet='smearedAllJets',
+      srcCJet='smearedCleanJets',
+      lhep="externalLHEProducer"
+      )
+
 addEventSummary(process,True)
 
-addMuNuEventTreePtMC(process,'muNuEventTreeMuonUp',   'wCandsJetsMuonUp',   'diMuonsSortedMuonUp',   lhep="source")
-addMuNuEventTreePtMC(process,'muNuEventTreeMuonDown', 'wCandsJetsMuonDown', 'diMuonsSortedMuonDown', lhep="source")
-addMuNuEventTreePtMC(process,'muNuEventTreeJetUp',    'wCandsJetsJetUp',    'diMuonsSortedJetUp',    lhep="source")
-addMuNuEventTreePtMC(process,'muNuEventTreeJetDown',  'wCandsJetsJetDown',  'diMuonsSortedJetDown',  lhep="source")
-addMuNuEventTreePtMC(process,'muNuEventTreeUCEUp',    'wCandsJetsUCEUp',    'diMuonsSortedUCEUp',    lhep="source")
-addMuNuEventTreePtMC(process,'muNuEventTreeUCEDown',  'wCandsJetsUCEDown',  'diMuonsSortedUCEDown',  lhep="source")
-process.TFileService.fileName = cms.string('MC.root') 
+addEventTreeMC(process,'muEleEventTreeJetUp',
+      srcGMu='smearedGoodMuonsJetUp',
+      srcVMu='smearedVetoMuonsJetUp',
+      srcQMu='smearedQCDMuonsJetUp',
+      srcAMu='smearedAllMuonsJetUp',
+      srcGEle='smearedGoodElectronsJetUp',
+      srcVEle='smearedVetoElectronsJetUp',
+      srcQEle='smearedQCDElectronsJetUp',
+      srcAEle='smearedAllElectronsJetUp',
+      srcGJet='smearedGoodJetsJetUp',
+      srcFJet='smearedFwdJetsJetUp',
+      srcAJet='smearedAllJetsJetUp',
+      srcCJet='smearedCleanJetsJetUp',
+      lhep="externalLHEProducer"
+      )
+
+addEventTreeMC(process,'muEleEventTreeJetDown',
+      srcGMu='smearedGoodMuonsJetDown',
+      srcVMu='smearedVetoMuonsJetDown',
+      srcQMu='smearedQCDMuonsJetDown',
+      srcAMu='smearedAllMuonsJetDown',
+      srcGEle='smearedGoodElectronsJetDown',
+      srcVEle='smearedVetoElectronsJetDown',
+      srcQEle='smearedQCDElectronsJetDown',
+      srcAEle='smearedAllElectronsJetDown',
+      srcGJet='smearedGoodJetsJetDown',
+      srcFJet='smearedFwdJetsJetDown',
+      srcAJet='smearedAllJetsJetDown',
+      srcCJet='smearedCleanJetsJetDown',
+      lhep="externalLHEProducer"
+      )
+
+addEventTreeMC(process,'muEleEventTreeMuonUp',
+      srcGMu='smearedGoodMuonsMuonUp',
+      srcVMu='smearedVetoMuonsMuonUp',
+      srcQMu='smearedQCDMuonsMuonUp',
+      srcAMu='smearedAllMuonsMuonUp',
+      srcGEle='smearedGoodElectronsMuonUp',
+      srcVEle='smearedVetoElectronsMuonUp',
+      srcQEle='smearedQCDElectronsMuonUp',
+      srcAEle='smearedAllElectronsMuonUp',
+      srcGJet='smearedGoodJetsMuonUp',
+      srcFJet='smearedFwdJetsMuonUp',
+      srcAJet='smearedAllJetsMuonUp',
+      srcCJet='smearedCleanJetsMuonUp',
+      lhep="externalLHEProducer"
+      )
+
+addEventTreeMC(process,'muEleEventTreeMuonDown',
+      srcGMu='smearedGoodMuonsMuonDown',
+      srcVMu='smearedVetoMuonsMuonDown',
+      srcQMu='smearedQCDMuonsMuonDown',
+      srcAMu='smearedAllMuonsMuonDown',
+      srcGEle='smearedGoodElectronsMuonDown',
+      srcVEle='smearedVetoElectronsMuonDown',
+      srcQEle='smearedQCDElectronsMuonDown',
+      srcAEle='smearedAllElectronsMuonDown',
+      srcGJet='smearedGoodJetsMuonDown',
+      srcFJet='smearedFwdJetsMuonDown',
+      srcAJet='smearedAllJetsMuonDown',
+      srcCJet='smearedCleanJetsMuonDown',
+      lhep="externalLHEProducer"
+      )
+
+process.TFileService.fileName = cms.string('noel_mc.root') 
 
 ## makes EDM output of all collections
 #process.out = cms.OutputModule("PoolOutputModule",

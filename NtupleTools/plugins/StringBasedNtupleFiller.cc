@@ -1,6 +1,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "UWAnalysis/NtupleTools/plugins/StringBasedNtupleFiller.h"
-
+DEFINE_EDM_PLUGIN(NtupleFillerFactory, GenBDWeightFiller, "GenBDWeightFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, bCandidatesFiller, "bCandidatesFiller"); 
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, SimBHadronsFiller, "SimBHadronsFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuTauPairFiller, "PATMuTauPairFiller");
@@ -13,6 +13,7 @@ DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATEleMuPairFiller, "PATEleMuPairFiller")
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATCandNuPairFiller, "PATCandNuPairFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATElectronNuPairFiller, "PATElectronNuPairFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuonNuPairFiller, "PATMuonNuPairFiller");
+DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATElectronNuPairFiller, "PATElectronNuPairFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuTrackPairFiller, "PATMuTrackPairFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATEleTrackPairFiller, "PATEleTrackPairFiller");
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuPairFiller, "PATMuPairFiller");

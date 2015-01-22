@@ -17,6 +17,7 @@ def makeJetUserFloat(floatName,xn='',source = 'wCandsJets'):
   ))
  return PSet_List
 
+
 def makeJetUserInt(intName,xn='',source = 'wCandsJets'):
  PSet_List = []
  for rank,name in zip(jetRanks,jetNames):
@@ -110,25 +111,86 @@ def makeZColl(tagName,methodName,sourceZ='diMuonsSorted'):
   )
   return PSet
 
-def makeBasicEle(tagName,methodName,sourceEle='selectedPatElectrons'):
+def makeElectron(tagName,methodName,sourceElectrons='smearedElectrons',lo=True):
   PSet = cms.PSet(
         pluginType  = cms.string("PATElectronFiller"),
-        src         = cms.InputTag(sourceEle),
+        src         = cms.InputTag(sourceElectrons),
         tag         = cms.string(tagName),
         method      = cms.string(methodName),
-        leadingOnly = cms.untracked.bool(True)
+        leadingOnly = cms.untracked.bool(lo)
   )
   return PSet
 
-def makeMuon(tagName,methodName,sourceMuon='selectedPatMuons',lo=True):
+def makeMuon(tagName,methodName,sourceMuons='selectedPatMuons',lo=True):
    PSet = cms.PSet(
          pluginType  = cms.string("PATMuonFiller"),
-         src         = cms.InputTag(sourceMuon),
+         src         = cms.InputTag(sourceMuons),
          tag         = cms.string(tagName),
          method      = cms.string(methodName),
          leadingOnly = cms.untracked.bool(lo)
    )
    return PSet
+
+def makeMET(tagName,methodName,sourceMET='smearedMET',lo=True):
+  PSet = cms.PSet(
+         pluginType  = cms.string("PATMETFiller"),
+         src         = cms.InputTag(sourceMET),
+         tag         = cms.string(tagName),
+         method      = cms.string(methodName),
+         leadingOnly = cms.untracked.bool(lo)
+  )
+  return PSet
+
+#jetRanks = [0,1,2,3,4,5,6,7]
+#jetNames = ['J1_','J2_','J3_','J4_','J5_','J6_','J7_','J8_']
+#
+#def makeJetStringPar(strName,xn='',source='wCandsJets'):
+# PSet_List = []
+# for rank,name in zip(jetRanks,jetNames):
+#  nameTag = name+strName+xn
+#  PSet_List.append(cms.PSet(
+#        pluginType = cms.string("PATMuonNuPairPtJetVarFiller"),
+#        src        = cms.InputTag(source),
+#        tag        = cms.string(nameTag),
+#        method     = cms.string(strName+'()'),
+#        rank       = cms.untracked.double(rank)
+#  ))
+# return PSet_List
+
+
+def makeJetList(strName,methodName,xn='',sourceJets='smearedJets'):
+   PSet_List = []
+   for rank,name in zip(jetRanks,jetNames):
+    nameTag = name+strName+xn
+    PSet_List.append(cms.PSet(
+          pluginType  = cms.string("PATJetFiller"),
+          src         = cms.InputTag(sourceJets),
+          tag         = cms.string(nameTag),
+          method      = cms.string(methodName),
+          leadingOnly = cms.untracked.bool(False),
+          myrank      = cms.untracked.double(rank)
+    ))
+   return PSet_List
+
+def makeJet(tagName,methodName,sourceJets='smearedJets',lo=True):
+   PSet = cms.PSet(
+         pluginType  = cms.string("PATJetFiller"),
+         src         = cms.InputTag(sourceJets),
+         tag         = cms.string(tagName),
+         method      = cms.string(methodName),
+         leadingOnly = cms.untracked.bool(lo)
+   )
+   return PSet
+
+def makeEleNu(tagName,methodName,source='wCandsJets',lo=True):
+  PSet = cms.PSet(
+        pluginType  = cms.string("PATElectronNuPairFiller"),
+        src         = cms.InputTag(source),
+        tag         = cms.string(tagName),
+        method      = cms.string(methodName),
+        leadingOnly = cms.untracked.bool(lo)
+  )
+  return PSet
 
 def makeMuNu(tagName,methodName,source='wCandsJets',lo=True):
   PSet = cms.PSet(
@@ -156,7 +218,89 @@ def makeIVFBs(tagName,methodName):
         src         = cms.InputTag('LCProducer','BCandFinalState'),
         tag         = cms.string(tagName),
         method      = cms.string(methodName+"()"),
-        leadingOnly = cms.untracked.bool(False)
+        leadingOnly = cms.untracked.bool(True)
+  )
+  return PSet
+
+def makeJetsLegit(sourceJets = 'smearedJets'):
+  theJets = cms.PSet(
+    Jet_legit_pt = makeJet('Jet_legit_pt','pt',sourceJets,False),
+    Jet_legit_eta = makeJet('Jet_legit_eta','eta',sourceJets,False),
+    Jet_legit_phi = makeJet('Jet_legit_phi','phi',sourceJets,False),
+    Jet_legit_ID = makeJet('Jet_legit_ID','userFloat("idLoose")',sourceJets,False),
+    Jet_legit_CSV = makeJet('Jet_legit_CSV','bDiscriminator("combinedSecondaryVertexBJetTags")',sourceJets,False),
+  )
+  return theJets
+
+def makeMETsInd(sourceMETs = 'smearedMET'):
+   theMETsInd = cms.PSet(
+    met_pt_Ind = makeMET("met_pt_Ind","pt()",sourceMET=sourceMETs,lo=False),
+    met_eta_Ind = makeMET("met_eta_Ind","eta()",sourceMET=sourceMETs,lo=False),
+   )
+   return theMETsInd
+
+
+def makeMETsColl(sourceMETs = 'wCandsSelEle'):
+   theMETsColl = cms.PSet(
+    met_pt_coll = makeEleNu("met_pt_coll","met().pt",sourceMETs,True),
+    met_eta_coll = makeEleNu("met_eta_coll","met().eta",sourceMETs,True),
+   )
+   return theMETsColl
+
+
+def makeJetsInd(sourceJets = 'smearedJets'):
+  theJetsInd = cms.PSet(
+    J1_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[0],
+    J2_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[1],
+    J3_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[2],
+    J4_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[3],
+    J5_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[4],
+    J6_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[5],
+    J7_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[6],
+    J8_pt_Ind = makeJetList('pt','pt()','_Ind',sourceJets)[7],
+    J1_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[0],
+    J2_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[1],
+    J3_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[2],
+    J4_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[3],
+    J5_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[4],
+    J6_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[5],
+    J7_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[6],
+    J8_eta_Ind = makeJetList('eta','eta()','_Ind',sourceJets)[7],
+    J1_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[0],
+    J2_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[1],
+    J3_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[2],
+    J4_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[3],
+    J5_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[4],
+    J6_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[5],
+    J7_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[6],
+    J8_phi_Ind = makeJetList('phi','phi()','_Ind',sourceJets)[7],
+    J1_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[0],
+    J2_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[1],
+    J3_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[2],
+    J4_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[3],
+    J5_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[4],
+    J6_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[5],
+    J7_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[6],
+    J8_idLoose_Ind = makeJetList('idLoose','userFloat("idLoose")','_Ind',sourceJets)[7],
+    J1_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[0],
+    J2_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[1],
+    J3_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[2],
+    J4_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[3],
+    J5_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[4],
+    J6_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[5],
+    J7_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[6],
+    J8_CSV_Ind = makeJetList('CSV','bDiscriminator("combinedSecondaryVertexBJetTags")','_Ind',sourceJets)[7],
+  )
+  return theJetsInd
+
+
+def makeGenBWeight(tagName,methodName):
+  PSet = cms.PSet(
+        pluginType  = cms.string("GenBDWeightFiller"),
+        src         = cms.InputTag('GBWeightProducer','GenBDWeight'),
+        tag         = cms.string(tagName),
+        method      = cms.string(methodName+"()"),
+        leadingOnly = cms.untracked.bool(True)
   )
   return PSet
 
@@ -221,6 +365,12 @@ def makeJetSVInfo(source = 'wCandsJets'):
    J2_CSVT_SFl_up = makeJetUserFloat('CSVT_SFl_up','',source)[1],
    J3_CSVT_SFl_up = makeJetUserFloat('CSVT_SFl_up','',source)[2],
    J4_CSVT_SFl_up = makeJetUserFloat('CSVT_SFl_up','',source)[3],
+
+  # from RecoTools/plugins/PATJetCSVreweight.h
+   J1_CSVreweight = makeJetUserFloat('CSVreweight','',source)[0],
+   J2_CSVreweight = makeJetUserFloat('CSVreweight','',source)[1],
+   J3_CSVreweight = makeJetUserFloat('CSVreweight','',source)[2],
+   J4_CSVreweight = makeJetUserFloat('CSVreweight','',source)[3],
 
 # from RecoTools/plugins/PATSSVJetEmbedder.h 
     J1_nTracks_SSV = makeJetUserFloat('nTracks_SSV','',source)[0],
@@ -378,56 +528,193 @@ def makeJetIDInfo(source = 'wCandsJets'):
    )
    return jetIDInfo
 
-def makeJetCorrectionInfo():
+def makeJetCorrectionInfo(source = 'wCandsJets'):
     # Jets at Various Levels of Correction from RecoTools/plugins/PATJetOverloader.h
    jetCorrectionInfo = cms.PSet(
-    J1_pt_L1 = makeJetUserFloat('pt_L1')[0],
-    J1_eta_L1 = makeJetUserFloat('eta_L1')[0],
-    J1_phi_L1 = makeJetUserFloat('phi_L1')[0],
-    J1_pt_L2 = makeJetUserFloat('pt_L2')[0],
-    J1_eta_L2 = makeJetUserFloat('eta_L2')[0],
-    J1_phi_L2 = makeJetUserFloat('phi_L2')[0],
-    J1_pt_L3 = makeJetUserFloat('pt_L3')[0],
-    J1_eta_L3 = makeJetUserFloat('eta_L3')[0],
-    J1_phi_L3 = makeJetUserFloat('phi_L3')[0],
-    J1_pt_L23 = makeJetUserFloat('pt_L23')[0],
-    J2_pt_L1 = makeJetUserFloat('pt_L1')[1],
-    J2_eta_L1 = makeJetUserFloat('eta_L1')[1],
-    J2_phi_L1 = makeJetUserFloat('phi_L1')[1],
-    J2_pt_L2 = makeJetUserFloat('pt_L2')[1],
-    J2_eta_L2 = makeJetUserFloat('eta_L2')[1],
-    J2_phi_L2 = makeJetUserFloat('phi_L2')[1],
-    J2_pt_L3 = makeJetUserFloat('pt_L3')[1],
-    J2_eta_L3 = makeJetUserFloat('eta_L3')[1],
-    J2_phi_L3 = makeJetUserFloat('phi_L3')[1],
-    J2_pt_L23 = makeJetUserFloat('pt_L23')[1],
-    J3_pt_L1 = makeJetUserFloat('pt_L1')[2],
-    J3_eta_L1 = makeJetUserFloat('eta_L1')[2],
-    J3_phi_L1 = makeJetUserFloat('phi_L1')[2],
-    J3_pt_L2 = makeJetUserFloat('pt_L2')[2],
-    J3_eta_L2 = makeJetUserFloat('eta_L2')[2],
-    J3_phi_L2 = makeJetUserFloat('phi_L2')[2],
-    J3_pt_L3 = makeJetUserFloat('pt_L3')[2],
-    J3_eta_L3 = makeJetUserFloat('eta_L3')[2],
-    J3_phi_L3 = makeJetUserFloat('phi_L3')[2],
-    J3_pt_L23 = makeJetUserFloat('pt_L23')[2],
-    J4_pt_L1 = makeJetUserFloat('pt_L1')[3],
-    J4_eta_L1 = makeJetUserFloat('eta_L1')[3],
-    J4_phi_L1 = makeJetUserFloat('phi_L1')[3],
-    J4_pt_L2 = makeJetUserFloat('pt_L2')[3],
-    J4_eta_L2 = makeJetUserFloat('eta_L2')[3],
-    J4_phi_L2 = makeJetUserFloat('phi_L2')[3],
-    J4_pt_L3 = makeJetUserFloat('pt_L3')[3],
-    J4_eta_L3 = makeJetUserFloat('eta_L3')[3],
-    J4_phi_L3 = makeJetUserFloat('phi_L3')[3],
-    J4_pt_L23 = makeJetUserFloat('pt_L23')[3],
+    J1_pt_L1  = makeJetUserFloat('pt_L1' ,'',source)[0],
+    J1_eta_L1 = makeJetUserFloat('eta_L1','',source)[0],
+    J1_phi_L1 = makeJetUserFloat('phi_L1','',source)[0],
+    J1_pt_L2  = makeJetUserFloat('pt_L2' ,'',source)[0],
+    J1_eta_L2 = makeJetUserFloat('eta_L2','',source)[0],
+    J1_phi_L2 = makeJetUserFloat('phi_L2','',source)[0],
+    J1_pt_L3  = makeJetUserFloat('pt_L3' ,'',source)[0],
+    J1_eta_L3 = makeJetUserFloat('eta_L3','',source)[0],
+    J1_phi_L3 = makeJetUserFloat('phi_L3','',source)[0],
+    J2_pt_L1  = makeJetUserFloat('pt_L1' ,'',source)[1],
+    J2_eta_L1 = makeJetUserFloat('eta_L1','',source)[1],
+    J2_phi_L1 = makeJetUserFloat('phi_L1','',source)[1],
+    J2_pt_L2  = makeJetUserFloat('pt_L2' ,'',source)[1],
+    J2_eta_L2 = makeJetUserFloat('eta_L2','',source)[1],
+    J2_phi_L2 = makeJetUserFloat('phi_L2','',source)[1],
+    J2_pt_L3  = makeJetUserFloat('pt_L3' ,'',source)[1],
+    J2_eta_L3 = makeJetUserFloat('eta_L3','',source)[1],
+    J2_phi_L3 = makeJetUserFloat('phi_L3','',source)[1],
+    J3_pt_L1  = makeJetUserFloat('pt_L1' ,'',source)[2],
+    J3_eta_L1 = makeJetUserFloat('eta_L1','',source)[2],
+    J3_phi_L1 = makeJetUserFloat('phi_L1','',source)[2],
+    J3_pt_L2  = makeJetUserFloat('pt_L2' ,'',source)[2],
+    J3_eta_L2 = makeJetUserFloat('eta_L2','',source)[2],
+    J3_phi_L2 = makeJetUserFloat('phi_L2','',source)[2],
+    J3_pt_L3  = makeJetUserFloat('pt_L3' ,'',source)[2],
+    J3_eta_L3 = makeJetUserFloat('eta_L3','',source)[2],
+    J3_phi_L3 = makeJetUserFloat('phi_L3','',source)[2],
+    J4_pt_L1  = makeJetUserFloat('pt_L1' ,'',source)[3],
+    J4_eta_L1 = makeJetUserFloat('eta_L1','',source)[3],
+    J4_phi_L1 = makeJetUserFloat('phi_L1','',source)[3],
+    J4_pt_L2  = makeJetUserFloat('pt_L2' ,'',source)[3],
+    J4_eta_L2 = makeJetUserFloat('eta_L2','',source)[3],
+    J4_phi_L2 = makeJetUserFloat('phi_L2','',source)[3],
+    J4_pt_L3  = makeJetUserFloat('pt_L3' ,'',source)[3],
+    J4_eta_L3 = makeJetUserFloat('eta_L3','',source)[3],
+    J4_phi_L3 = makeJetUserFloat('phi_L3','',source)[3],
    )
    return jetCorrectionInfo
 
+def makeGenJetInfo(source='wCandJets'):
+    # Gen Jet information embedded from RecoTools/plugins/PATJetSmearer.h 
+   jetGenInfo = cms.PSet(
+    J1_pt_gen_NoNu = makeJetUserFloat('pt_gen_NoNu','',source)[0],
+    J2_pt_gen_NoNu = makeJetUserFloat('pt_gen_NoNu','',source)[1],
+    J3_pt_gen_NoNu = makeJetUserFloat('pt_gen_NoNu','',source)[2],
+    J4_pt_gen_NoNu = makeJetUserFloat('pt_gen_NoNu','',source)[3],
+    J1_eta_gen_NoNu = makeJetUserFloat('eta_gen_NoNu','',source)[0],
+    J2_eta_gen_NoNu = makeJetUserFloat('eta_gen_NoNu','',source)[1],
+    J3_eta_gen_NoNu = makeJetUserFloat('eta_gen_NoNu','',source)[2],
+    J4_eta_gen_NoNu = makeJetUserFloat('eta_gen_NoNu','',source)[3],
+    J1_phi_gen_NoNu = makeJetUserFloat('phi_gen_NoNu','',source)[0],
+    J2_phi_gen_NoNu = makeJetUserFloat('phi_gen_NoNu','',source)[1],
+    J3_phi_gen_NoNu = makeJetUserFloat('phi_gen_NoNu','',source)[2],
+    J4_phi_gen_NoNu = makeJetUserFloat('phi_gen_NoNu','',source)[3],
+    J1_pt_gen_Nu = makeJetUserFloat('pt_gen_Nu','',source)[0],
+    J2_pt_gen_Nu = makeJetUserFloat('pt_gen_Nu','',source)[1],
+    J3_pt_gen_Nu = makeJetUserFloat('pt_gen_Nu','',source)[2],
+    J4_pt_gen_Nu = makeJetUserFloat('pt_gen_Nu','',source)[3],
+    J1_eta_gen_Nu = makeJetUserFloat('eta_gen_Nu','',source)[0],
+    J2_eta_gen_Nu = makeJetUserFloat('eta_gen_Nu','',source)[1],
+    J3_eta_gen_Nu = makeJetUserFloat('eta_gen_Nu','',source)[2],
+    J4_eta_gen_Nu = makeJetUserFloat('eta_gen_Nu','',source)[3],
+    J1_phi_gen_Nu = makeJetUserFloat('phi_gen_Nu','',source)[0],
+    J2_phi_gen_Nu = makeJetUserFloat('phi_gen_Nu','',source)[1],
+    J3_phi_gen_Nu = makeJetUserFloat('phi_gen_Nu','',source)[2],
+    J4_phi_gen_Nu = makeJetUserFloat('phi_gen_Nu','',source)[3],
+   )
+   return jetGenInfo
 
-def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = 'weCandsJets', sourceEle="selectedPatElectrons"):
+def makeLeptons(srcGoodMu='goodMuons',srcVetoMu='vetoMuons',srcQCDMu='qcdMuons',
+                srcGoodEle='goodElectrons',srcVetoEle='vetoElectrons',srcQCDEle='qcdElectrons'):
+
+    electronLooseID = \
+        '((' \
+        'abs(superCluster.eta) < 1.442 &&' \
+        'abs(deltaEtaSuperClusterTrackAtVtx) < 0.007 &&' \
+        'abs(deltaPhiSuperClusterTrackAtVtx) < 0.15 &&' \
+        'sigmaIetaIeta < 0.01 &&' \
+        'hadronicOverEm < 0.12' \
+        ')||(' \
+        'abs(superCluster.eta) > 1.566 && abs(superCluster.eta) < 2.5 &&' \
+        'abs(deltaEtaSuperClusterTrackAtVtx) < 0.009 &&' \
+        'abs(deltaPhiSuperClusterTrackAtVtx) < 0.10 &&' \
+        'sigmaIetaIeta < 0.03 &&' \
+        'hadronicOverEm < 0.10' \
+        ')) &&' \
+        'abs(dB) < 0.02 &&' \
+        'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &&' \
+        'passConversionVeto &&' \
+        'gsfTrack.trackerExpectedHitsInner.numberOfHits <= 1 &&' \
+        'triggerObjectMatches.size >= 0'
+
+    electronTightID =  \
+        '((' \
+        'abs(superCluster.eta) < 1.442 &&' \
+        'abs(deltaEtaSuperClusterTrackAtVtx) < 0.004 &&' \
+        'abs(deltaPhiSuperClusterTrackAtVtx) < 0.03 &&' \
+        'sigmaIetaIeta < 0.01 &&' \
+        'hadronicOverEm < 0.12' \
+        ')||(' \
+        'abs(superCluster.eta) > 1.566 && abs(superCluster.eta) < 2.5 &&' \
+        'abs(deltaEtaSuperClusterTrackAtVtx) < 0.005 &&' \
+        'abs(deltaPhiSuperClusterTrackAtVtx) < 0.02 &&' \
+        'sigmaIetaIeta < 0.03 &&' \
+        'hadronicOverEm < 0.10' \
+        ')) &&' \
+        'abs(dB) < 0.02 &&' \
+        'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &&' \
+        'passConversionVeto &&' \
+        'gsfTrack.trackerExpectedHitsInner.numberOfHits < 1'
+
+    electronIso = '(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et'
+    muonIso = "(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt"
+
+    leptons = cms.PSet(
+      allMu_pt_vec = makeMuon("allMu_pt_vec","pt",sourceMuons="allMuons",lo=False),
+      allMu_eta_vec = makeMuon("allMu_eta_vec","eta",sourceMuons="allMuons",lo=False),
+      allMu_phi_vec = makeMuon("allMu_phi_vec","phi",sourceMuons="allMuons",lo=False),
+      allMu_charge_vec = makeMuon("allMu_charge_vec","charge",sourceMuons="allMuons",lo=False),
+      allMu_looseID_vec = makeMuon("allMu_looseID_vec","userFloat('looseID')",sourceMuons="allMuons",lo=False),
+      allMu_Iso_vec = makeMuon("allMu_Iso_vec",muonIso,sourceMuons="allMuons",lo=False),
+      allMu_chIso_vec = makeMuon("allMu_chIso_vec","pfIsolationR04().sumChargedHadronPt",sourceMuons="allMuons",lo=False),
+      allMu_nhIso_vec = makeMuon("allMu_nhIso_vec","pfIsolationR04().sumNeutralHadronEt",sourceMuons="allMuons",lo=False),
+      allMu_phIso_vec = makeMuon("allMu_phIso_vec","pfIsolationR04().sumPhotonEt",sourceMuons="allMuons",lo=False),
+      allMu_puIso_vec = makeMuon("allMu_puIso_vec","pfIsolationR04().sumPUPt",sourceMuons="allMuons",lo=False),
+
+      goodMu_pt_vec = makeMuon("goodMu_pt_vec","pt",sourceMuons=srcGoodMu,lo=False),
+      goodMu_eta_vec = makeMuon("goodMu_eta_vec","eta",sourceMuons=srcGoodMu,lo=False),
+      goodMu_phi_vec = makeMuon("goodMu_phi_vec","phi",sourceMuons=srcGoodMu,lo=False),
+      goodMu_charge_vec = makeMuon("goodMu_charge_vec","charge",sourceMuons=srcGoodMu,lo=False),
+ 
+      vetoMu_pt_vec = makeMuon("vetoMu_pt_vec","pt",sourceMuons=srcVetoMu,lo=False),
+      vetoMu_eta_vec = makeMuon("vetoMu_eta_vec","eta",sourceMuons=srcVetoMu,lo=False),
+      vetoMu_phi_vec = makeMuon("vetoMu_phi_vec","phi",sourceMuons=srcVetoMu,lo=False),
+      vetoMu_charge_vec = makeMuon("vetoMu_charge_vec","charge",sourceMuons=srcVetoMu,lo=False),
+ 
+      qcdMu_pt_vec = makeMuon("qcdMu_pt_vec","pt",sourceMuons=srcQCDMu,lo=False),
+      qcdMu_eta_vec = makeMuon("qcdMu_eta_vec","eta",sourceMuons=srcQCDMu,lo=False),
+      qcdMu_phi_vec = makeMuon("qcdMu_phi_vec","phi",sourceMuons=srcQCDMu,lo=False),
+      qcdMu_charge_vec = makeMuon("qcdMu_charge_vec","charge",sourceMuons=srcQCDMu,lo=False),
+ 
+      allEle_pt_vec = makeElectron("allEle_pt_vec","pt",sourceElectrons="allElectrons",lo=False),
+      allEle_eta_vec = makeElectron("allEle_eta_vec","eta",sourceElectrons="allElectrons",lo=False),
+      allEle_phi_vec = makeElectron("allEle_phi_vec","phi",sourceElectrons="allElectrons",lo=False),
+      allEle_charge_vec = makeElectron("allEle_charge_vec","charge",sourceElectrons="allElectrons",lo=False),
+      #allEle_looseID_vec = makeElectron("allEle_looseID_vec",electronLooseID,sourceElectrons="allElectrons",lo=False),
+      #allEle_tightID_vec = makeElectron("allEle_tightID_vec",electronTightID,sourceElectrons="allElectrons",lo=False),
+      allEle_iso_vec = makeElectron("allEle_iso_vec",electronIso,sourceElectrons="allElectrons",lo=False),
+      allEle_scEta_vec = makeElectron("allEle_scEta_vec","superCluster.eta",sourceElectrons="allElectrons",lo=False),
+      allEle_dEscTratVtx_vec = makeElectron("allEle_dEscTratVtx_vec","deltaEtaSuperClusterTrackAtVtx",sourceElectrons="allElectrons",lo=False),
+      allEle_dPscTratVtx_vec = makeElectron("allEle_dPscTratVtx_vec","deltaPhiSuperClusterTrackAtVtx",sourceElectrons="allElectrons",lo=False),
+      allEle_sIeIe_vec = makeElectron("allEle_sIeIe_vec","sigmaIetaIeta",sourceElectrons="allElectrons",lo=False),
+      allEle_hoEM_vec = makeElectron("allEle_hoEM_vec","hadronicOverEm",sourceElectrons="allElectrons",lo=False),
+      allEle_dB_vec = makeElectron("allEle_dB_vec","dB",sourceElectrons="allElectrons",lo=False),
+      allEle_ecalE_vec = makeElectron("allEle_ecalE_vec","ecalEnergy",sourceElectrons="allElectrons",lo=False),
+      allEle_escoP_vec = makeElectron("allEle_escoP_vec","eSuperClusterOverP",sourceElectrons="allElectrons",lo=False),
+      allEle_pConvVto_vec = makeElectron("allEle_pConvVto_vec","passConversionVeto",sourceElectrons="allElectrons",lo=False),
+      allEle_trkNrH_vec = makeElectron("allEle_trkNrH_vec","gsfTrack.trackerExpectedHitsInner.numberOfHits",sourceElectrons="allElectrons",lo=False),
+      allEle_IoEmIoP_vec = makeElectron("allEle_IoEmIoP_vec","1./ecalEnergy - eSuperClusterOverP/ecalEnergy",sourceElectrons="allElectrons",lo=False),
+      allEle_chIso_vec = makeElectron("allEle_chIso_vec","chargedHadronIso",sourceElectrons="allElectrons",lo=False),
+      allEle_nhIso_vec = makeElectron("allEle_nhIso_vec","neutralHadronIso",sourceElectrons="allElectrons",lo=False),
+      allEle_phIso_vec = makeElectron("allEle_phIso_vec","photonIso",sourceElectrons="allElectrons",lo=False),
+      allEle_puIso_vec = makeElectron("allEle_puIso_vec","puChargedHadronIso",sourceElectrons="allElectrons",lo=False),
+
+      goodEle_pt_vec = makeElectron("goodEle_pt_vec","pt",sourceElectrons=srcGoodEle,lo=False),
+      goodEle_eta_vec = makeElectron("goodEle_eta_vec","eta",sourceElectrons=srcGoodEle,lo=False),
+      goodEle_phi_vec = makeElectron("goodEle_phi_vec","phi",sourceElectrons=srcGoodEle,lo=False),
+      goodEle_charge_vec = makeElectron("goodEle_charge_vec","charge",sourceElectrons=srcGoodEle,lo=False),
+ 
+      vetoEle_pt_vec = makeElectron("vetoEle_pt_vec","pt",sourceElectrons=srcVetoEle,lo=False),
+      vetoEle_eta_vec = makeElectron("vetoEle_eta_vec","eta",sourceElectrons=srcVetoEle,lo=False),
+      vetoEle_phi_vec = makeElectron("vetoEle_phi_vec","phi",sourceElectrons=srcVetoEle,lo=False),
+      vetoEle_charge_vec = makeElectron("vetoEle_charge_vec","charge",sourceElectrons=srcVetoEle,lo=False),
+ 
+      qcdEle_pt_vec = makeElectron("qcdEle_pt_vec","pt",sourceElectrons=srcQCDEle,lo=False),
+      qcdEle_eta_vec = makeElectron("qcdEle_eta_vec","eta",sourceElectrons=srcQCDEle,lo=False),
+      qcdEle_phi_vec = makeElectron("qcdEle_phi_vec","phi",sourceElectrons=srcQCDEle,lo=False),
+      qcdEle_charge_vec = makeElectron("qcdEle_charge_vec","charge",sourceElectrons=srcQCDEle,lo=False),
+    )
+    return leptons
+
+
+def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = 'weCandsJets', srcElectrons="smearedElectrons",srcMuons="smearedMuons"):
  commonCollections = cms.PSet(         
-    #electronPt = makeMuNu("electronPt","lepton.pt()",sourceE),
     PVs = cms.PSet(
         pluginType = cms.string("VertexSizeFiller"),
         src = cms.InputTag("primaryVertexFilter"),
@@ -472,18 +759,26 @@ def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = '
     J2_mass_PV = makeJetUserFloat('mass_PV','',source)[1],
     J3_mass_PV = makeJetUserFloat('mass_PV','',source)[2],
     J4_mass_PV = makeJetUserFloat('mass_PV','',source)[3],
-    #J1_partonFlavour = makeJetStringPar('partonFlavour','',source)[0],
-    #J2_partonFlavour = makeJetStringPar('partonFlavour','',source)[1],
-    #J1_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[0],
-    #J2_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[1],
-    #J1_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[0],
-    #J2_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[1],
-    #J1_electronMultiplicity = makeJetStringPar('electronMultiplicity','',source)[0],
-    #J2_electronMultiplicity = makeJetStringPar('electronMultiplicity','',source)[1],
-    #J1_photonMultiplicity = makeJetStringPar('photonMultiplicity','',source)[0],
-    #J2_photonMultiplicity = makeJetStringPar('photonMultiplicity','',source)[1],
+    J1_partonFlavour = makeJetStringPar('partonFlavour','',source)[0],
+    J2_partonFlavour = makeJetStringPar('partonFlavour','',source)[1],
+    J3_partonFlavour = makeJetStringPar('partonFlavour','',source)[2],
+    J4_partonFlavour = makeJetStringPar('partonFlavour','',source)[3],
+    J1_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[0],
+    J2_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[1],
+    J3_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[2],
+    J4_muonMultiplicity = makeJetStringPar('muonMultiplicity','',source)[3],
+    J1_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[0],
+    J2_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[1],
+    J3_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[2],
+    J4_chargedMultiplicity = makeJetStringPar('chargedMultiplicity','',source)[3],
+    J1_electronMultiplicity = makeJetStringPar('electronMultiplicity','',source)[0],
+    J2_electronMultiplicity = makeJetStringPar('electronMultiplicity','',source)[1],
+    J1_photonMultiplicity = makeJetStringPar('photonMultiplicity','',source)[0],
+    J2_photonMultiplicity = makeJetStringPar('photonMultiplicity','',source)[1],
     J1_jetCharge = makeJetString('jetCharge','',source)[0],
     J2_jetCharge = makeJetString('jetCharge','',source)[1],
+    J3_jetCharge = makeJetString('jetCharge','',source)[2],
+    J4_jetCharge = makeJetString('jetCharge','',source)[3],
     J1_mass = makeJetString('mass','',source)[0],
     J2_mass = makeJetString('mass','',source)[1],
     #J1_photonEnergy = makeJetString('photonEnergy','',source)[0],
@@ -543,16 +838,20 @@ def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = '
 
 # Few Electron Variables for MuEle control region
 # BIG WARNING: This ID is super outdated. We need to go over the new EGamma ID and actualize it. WP80 is similar to the new "medium" one
-    ptEle = makeBasicEle("ele_pt","pt",sourceEle),
-    phiEle = makeBasicEle("ele_phi","phi",sourceEle),
-    etaEle = makeBasicEle("ele_eta","eta",sourceEle),
-    wp80Ele = makeBasicEle("ele_wp80","userFloat('wp80')",sourceEle),
-    chargeEle = makeBasicEle("ele_charge","charge",sourceEle),
-    isoEleDB = makeBasicEle("isoEleDB","(userIso(0)+max(userIso(1)+neutralHadronIso()-0.5*userIso(2),0.0))/pt",sourceEle),
+    electron_pt_vec = makeElectron("electron_pt_vec","pt",sourceElectrons=srcElectrons,lo=False),
+    electron_eta_vec = makeElectron("electron_eta_vec","eta",sourceElectrons=srcElectrons,lo=False),
+    electron_phi_vec = makeElectron("electron_phi_vec","phi",sourceElectrons=srcElectrons,lo=False),
+
+    ptEle = makeElectron("ele_pt","pt",sourceElectrons=srcElectrons),
+    phiEle = makeElectron("ele_phi","phi",sourceElectrons=srcElectrons),
+    etaEle = makeElectron("ele_eta","eta",sourceElectrons=srcElectrons),
+    wp80Ele = makeElectron("ele_wp80","userFloat('wp80')",sourceElectrons=srcElectrons),
+    chargeEle = makeElectron("ele_charge","charge",sourceElectrons=srcElectrons),
+    isoEleDB = makeElectron("isoEleDB","(userIso(0)+max(userIso(1)+neutralHadronIso()-0.5*userIso(2),0.0))/pt",sourceElectrons=srcElectrons),
 
 # Z Variables
     DiMuonMass = makeZColl("DiMuonMass","mass",sourceZ),
-    DiMuonPt = makeZColl("DiMuonPt","mass",sourceZ),
+    DiMuonPt = makeZColl("DiMuonPt","pt",sourceZ),
     mu1_pt = makeZColl("mu1_pt","leg1.pt()",sourceZ),
     mu2_pt = makeZColl("mu2_pt","leg2.pt()",sourceZ),
     mu1_phi = makeZColl("mu1_phi","leg1.phi()",sourceZ),
@@ -572,59 +871,42 @@ def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = '
     mJ3J4 = makeMuNu("mJ3J4","mJJ2",source,True),
     ptJJ = makeMuNu("ptJJ","ptJJ",source,True),
 
-    muon_sel_pt          = makeMuon("muon_sel_pt","pt",sourceMuon='selectedPatMuons'),
-    muon_sel_eta         = makeMuon("muon_sel_eta","eta",sourceMuon='selectedPatMuons'),
-    muon_sel_phi         = makeMuon("muon_sel_phi","phi",sourceMuon='selectedPatMuons'),
-    muon_sel_charge      = makeMuon("muon_sel_charge","charge",sourceMuon='selectedPatMuons'),
-    muon_sel_iso         = makeMuon("muon_sel_iso","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='selectedPatMuons'),
-    muon_sel_pt_vec      = makeMuon("muon_sel_pt_vec","pt",sourceMuon='selectedPatMuons',lo=False),
-    muon_sel_eta_vec     = makeMuon("muon_sel_eta_vec","eta",sourceMuon='selectedPatMuons',lo=False),
-    muon_sel_phi_vec     = makeMuon("muon_sel_phi_vec","phi",sourceMuon='selectedPatMuons',lo=False),
-    muon_sel_charge_vec  = makeMuon("muon_sel_charge_vec","charge",sourceMuon='selectedPatMuons',lo=False),
-    muon_sel_iso_vec     = makeMuon("muon_sel_iso_vec","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='selectedPatMuons',lo=False),
-
-    #muon_loose_pt          = makeMuon("muon_loose_pt","pt",sourceMuon='QCDvetoPatMuons'),
-    #muon_loose_eta         = makeMuon("muon_loose_eta","eta",sourceMuon='QCDvetoPatMuons'),
-    #muon_loose_phi         = makeMuon("muon_loose_phi","phi",sourceMuon='QCDvetoPatMuons'),
-    #muon_loose_charge      = makeMuon("muon_loose_charge","charge",sourceMuon='QCDvetoPatMuons'),
-    #muon_loose_iso         = makeMuon("muon_loose_iso","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='QCDvetoPatMuons'),
-    #muon_loose_pt_vec      = makeMuon("muon_loose_pt_vec","pt",sourceMuon='QCDvetoPatMuons',lo=False),
-    #muon_loose_eta_vec     = makeMuon("muon_loose_eta_vec","eta",sourceMuon='QCDvetoPatMuons',lo=False),
-    #muon_loose_phi_vec     = makeMuon("muon_loose_phi_vec","phi",sourceMuon='QCDvetoPatMuons',lo=False),
-    #muon_loose_charge_vec  = makeMuon("muon_loose_charge_vec","charge",sourceMuon='QCDvetoPatMuons',lo=False),
-    #muon_loose_iso_vec     = makeMuon("muon_loose_iso_vec","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='QCDvetoPatMuons',lo=False),
-
-    #muon_loose_withIso_pt          = makeMuon("muon_loose_withIso_pt","pt",sourceMuon='preselectedPatMuons'),
-    #muon_loose_withIso_eta         = makeMuon("muon_loose_withIso_eta","eta",sourceMuon='preselectedPatMuons'),
-    #muon_loose_withIso_phi         = makeMuon("muon_loose_withIso_phi","phi",sourceMuon='preselectedPatMuons'),
-    #muon_loose_withIso_charge      = makeMuon("muon_loose_withIso_charge","charge",sourceMuon='preselectedPatMuons'),
-    #muon_loose_withIso_iso         = makeMuon("muon_loose_withIso_iso","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='preselectedPatMuons'),
-    #muon_loose_withIso_pt_vec      = makeMuon("muon_loose_withIso_pt_vec","pt",sourceMuon='preselectedPatMuons',lo=False),
-    #muon_loose_withIso_eta_vec     = makeMuon("muon_loose_withIso_eta_vec","eta",sourceMuon='preselectedPatMuons',lo=False),
-    #muon_loose_withIso_phi_vec     = makeMuon("muon_loose_withIso_phi_vec","phi",sourceMuon='preselectedPatMuons',lo=False),
-    #muon_loose_withIso_charge_vec  = makeMuon("muon_loose_withIso_charge_vec","charge",sourceMuon='preselectedPatMuons',lo=False),
-    #muon_loose_withIso_iso_vec     = makeMuon("muon_loose_withIso_iso_vec","(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt",sourceMuon='preselectedPatMuons',lo=False),
+    nrvtx = makeMuon("nrvtx",'userFloat("nvtx")',sourceMuons=srcMuons),
+    nrPU  = makeMuon("nrPU",'userFloat("nrPU")',sourceMuons=srcMuons),
+    preWeight = makeMuon("preWeight",'userFloat("preWeight")',sourceMuons=srcMuons),
 
     nrMu = makeCollSize('selectedPatMuons','nrMu'),
     nrEle = makeCollSize('selectedPatElectrons','nrEle'),
     nrMuLoose = makeCollSize('preselectedPatMuons','nrMuLoose'),
     nrEleLoose = makeCollSize('preselectedPatElectrons','nrEleLoose'),
-    nrMuQCD = makeCollSize('QCDvetoPatMuons','nrMuQCD'),
+    nrGoodMu = makeCollSize('goodMuons','nrGoodMu'),
+    nrVetoMu = makeCollSize('vetoMuons','nrVetoMu'),
+    nrQCDMu = makeCollSize('qcdMuons','nrQCDMu'),
+    nrGoodEle = makeCollSize('goodElectrons','nrGoodEle'),
+    nrVetoEle = makeCollSize('vetoElectrons','nrVetoEle'),
+    nrQCDEle = makeCollSize('qcdElectrons','nrQCDEle'),
+ 
 
-    muon_pt = makeMuNu("muon_pt","lepton().pt",source),
-    muon_eta = makeMuNu("muon_eta","lepton.eta",source),
-    muon_phi = makeMuNu("muon_phi","lepton.phi",source),
-    muon_charge = makeMuNu("muon_charge","lepton.charge()",source),
+    #muon_pt = makeMuNu("muon_pt","lepton().pt",source),
+    #muon_eta = makeMuNu("muon_eta","lepton.eta",source),
+    #muon_phi = makeMuNu("muon_phi","lepton.phi",source),
+    #muon_charge = makeMuNu("muon_charge","lepton.charge()",source),
     muon_pt_vec = makeMuNu("muon_pt_vec","lepton().pt",source,lo=False),
     muon_eta_vec  = makeMuNu("muon_eta_vec","lepton.eta",source,lo=False),
     muon_phi_vec  = makeMuNu("muon_phi_vec","lepton.phi",source,lo=False),
     muon_charge_vec  = makeMuNu("muon_charge_vec","lepton.charge()",source,lo=False),
     Wpt = makeMuNu("Wpt","corPt()",source),
+    muon_pt_vec_2 = makeMuon("muon_pt_vec_2","pt",sourceMuons=srcMuons,lo=False),
+    muon_eta_vec_2 = makeMuon("muon_eta_vec_2","eta",sourceMuons=srcMuons,lo=False),
+    muon_phi_vec_2 = makeMuon("muon_phi_vec_2","phi",sourceMuons=srcMuons,lo=False),
+    muon_charge_vec_2 = makeMuon("muon_charge_vec_2","charge",sourceMuons=srcMuons,lo=False),
 
-    #muNuRelPFIso = makeMuNu("muNuRelPFIso",
-    # "(lepton.chargedHadronIso()+lepton.photonIso()+lepton.neutralHadronIso())/lepton.pt()",source,lo=True),
-    #muNuRelPFIso_vec = makeMuNu("muNuRelPFIso",
-    # "(lepton.chargedHadronIso()+lepton.photonIso()+lepton.neutralHadronIso())/lepton.pt()",source,lo=False),
+    eleNuRelPFIsoDB_A = makeElectron("eleNuRelPFIsoDB_A",
+      "(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et",
+      srcElectrons,lo=True),
+    eleNuRelPFIsoDB_A_vec = makeElectron("eleNuRelPFIsoDB_A_vec",
+      "(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et",
+      srcElectrons,lo=False),
 
     muNuRelPFIsoDB_A = makeMuNu("muNuRelPFIsoDB_A",
       "(lepton.pfIsolationR04().sumChargedHadronPt + max((lepton.pfIsolationR04().sumNeutralHadronEt + lepton.pfIsolationR04().sumPhotonEt - 0.5*lepton.pfIsolationR04().sumPUPt),0.0))/lepton.pt",
@@ -633,21 +915,11 @@ def makeCollections(source = 'wCandsJets', sourceZ = 'diMuonsSorted',sourceE = '
       "(lepton.pfIsolationR04().sumChargedHadronPt + max((lepton.pfIsolationR04().sumNeutralHadronEt + lepton.pfIsolationR04().sumPhotonEt - 0.5*lepton.pfIsolationR04().sumPUPt),0.0))/lepton.pt",
       source,lo=False),
 
-    #muNuRelPFIsoDB_B = makeMuNu("muNuRelPFIsoDB_B",
-    # "(lepton.userIso(0)+max(lepton.photonIso()+lepton.neutralHadronIso()-0.5*lepton.puChargedHadronIso,0.0))/lepton.pt()",
-    # source,lo=True),
-    #muNuRelPFIsoDB_B_vec = makeMuNu("muNuRelPFIsoDB_B_vec",
-    # "(lepton.userIso(0)+max(lepton.photonIso()+lepton.neutralHadronIso()-0.5*lepton.puChargedHadronIso,0.0))/lepton.pt()",
-    # source,lo=False),
-    #PFIsoRho = makeMuNu("PFIsoRho","lepton.userFloat('rho')",source),
-    #muNuRelStdIso03 = makeMuNu("muNuRelStdIso03",
-    # "(lepton.isolationR03.sumPt+lepton.isolationR03.emEt+lepton.isolationR03.hadEt)/lepton.pt()",source),
-
-
     ipDXY = makeMuNu("ipDXY","lepton.userFloat('ipDXY')",source,True),
     met_pt = makeMuNu("met_pt","met().pt",source,True),
     met_phi = makeMuNu("met_phi","met().phi",source,True),
-    mt = makeMuNu("mt","mt",source),
+    mt_muon_vec = makeMuon("mt_muon_vec","userFloat('mt')",sourceMuons=srcMuons,lo=False),
+    mt_electron_vec = makeElectron("mt_electron_vec","userFloat('mt')",sourceElectrons=srcElectrons,lo=False),
     
     metJJ = makeMuNu("metjj","metjj",source),
     leptonjj = makeMuNu("leptonjj","leptonjj",source),
@@ -667,29 +939,78 @@ def addMuNuEventTreePtData(process,name,source = 'wCandsJets',sourceZ = 'diMuons
       #makeJetCorrectionInfo(),
       makeJetSVInfo(source),
       coreCollections = cms.VInputTag( cms.InputTag(source) ),
-      J1_eta_L23 = makeJetUserFloat('eta_L23')[0],
-      J1_phi_L23 = makeJetUserFloat('phi_L23')[0],
-      J2_eta_L23 = makeJetUserFloat('eta_L23')[1],
-      J2_phi_L23 = makeJetUserFloat('phi_L23')[1],
-      J3_eta_L23 = makeJetUserFloat('eta_L23')[2],
-      J3_phi_L23 = makeJetUserFloat('phi_L23')[2],
-      J4_eta_L23 = makeJetUserFloat('eta_L23')[3],
-      J4_phi_L23 = makeJetUserFloat('phi_L23')[3]
+      bCandidatenBC = makeIVFBs("bCandidatenBC","nBC"),
+      bCandidate1Pt = makeIVFBs("bCandidate1Pt","BC1PT"),
+      bCandidate2Pt = makeIVFBs("bCandidate2Pt","BC2PT"),
+      bCandidate1Eta = makeIVFBs("bCandidate1Eta","BC1ETA"),
+      bCandidate2Eta = makeIVFBs("bCandidate2Eta","BC2ETA"),
+      bCandidate1Phi = makeIVFBs("bCandidate1Phi","BC1PHI"),
+      bCandidate2Phi = makeIVFBs("bCandidate2Phi","BC2PHI"),
+      bCandidateDeltaR = makeIVFBs("bCandidateDeltaR","BCDeltaR"),
+      bCandidateDeltaPhi = makeIVFBs("bCandidateDeltaPhi","BDeltaPHI"),
+      bCandidateBC1nTracks = makeIVFBs("bCandidateBC1nTracks","BC1nTracks"),
+      bCandidateBC2nTracks = makeIVFBs("bCandidateBC2nTracks","BC2nTracks"),
+      bCandidateBCEnergySum = makeIVFBs("bCandidateBCEnergySum","BCEnergySum"),
+      bCandidateBCGenEnergySum = makeIVFBs("bCandidateBCGenEnergySum","BCGenEnergySum"),
+      bCandidatenJetAssociatedToBC1 = makeIVFBs("bCandidatenJetAssociatedToBC1","nJetAssociatedToBC1"),
+      bCandidatenJetAssociatedToBC2 = makeIVFBs("bCandidatenJetAssociatedToBC2","nJetAssociatedToBC2"),
+      bCandidatenJetAssociatedToBC = makeIVFBs("bCandidatenJetAssociatedToBC","nJetAssociatedToBC"),
+      bCandidateJet1BC1PT = makeIVFBs("bCandidateJet1BC1PT","Jet1BC1PT"),
+      bCandidateJet2BC1PT = makeIVFBs("bCandidateJet2BC1PT","Jet2BC1PT"),
+      bCandidateJet3BC1PT = makeIVFBs("bCandidateJet3BC1PT","Jet3BC1PT"),
+      bCandidateJet4BC1PT = makeIVFBs("bCandidateJet4BC1PT","Jet4BC1PT"),
+      bCandidateJet1BC1ETA = makeIVFBs("bCandidateJet1BC1ETA","Jet1BC1ETA"),
+      bCandidateJet2BC1ETA = makeIVFBs("bCandidateJet2BC1ETA","Jet2BC1ETA"),
+      bCandidateJet3BC1ETA = makeIVFBs("bCandidateJet3BC1ETA","Jet3BC1ETA"),
+      bCandidateJet4BC1ETA = makeIVFBs("bCandidateJet4BC1ETA","Jet4BC1ETA"),
+      bCandidateJet1BC1PHI = makeIVFBs("bCandidateJet1BC1PHI","Jet1BC1PHI"),
+      bCandidateJet2BC1PHI = makeIVFBs("bCandidateJet2BC1PHI","Jet2BC1PHI"),
+      bCandidateJet3BC1PHI = makeIVFBs("bCandidateJet3BC1PHI","Jet3BC1PHI"),
+      bCandidateJet4BC1PHI = makeIVFBs("bCandidateJet4BC1PHI","Jet4BC1PHI"),
+      bCandidateJet1BC2PT = makeIVFBs("bCandidateJet1BC2PT","Jet1BC2PT"),
+      bCandidateJet2BC2PT = makeIVFBs("bCandidateJet2BC2PT","Jet2BC2PT"),
+      bCandidateJet3BC2PT = makeIVFBs("bCandidateJet3BC2PT","Jet3BC2PT"),
+      bCandidateJet4BC2PT = makeIVFBs("bCandidateJet4BC2PT","Jet4BC2PT"),
+      bCandidateJet1BC2ETA = makeIVFBs("bCandidateJet1BC2ETA","Jet1BC2ETA"),
+      bCandidateJet2BC2ETA = makeIVFBs("bCandidateJet2BC2ETA","Jet2BC2ETA"),
+      bCandidateJet3BC2ETA = makeIVFBs("bCandidateJet3BC2ETA","Jet3BC2ETA"),
+      bCandidateJet4BC2ETA = makeIVFBs("bCandidateJet4BC2ETA","Jet4BC2ETA"),
+      bCandidateJet1BC2PHI = makeIVFBs("bCandidateJet1BC2PHI","Jet1BC2PHI"),
+      bCandidateJet2BC2PHI = makeIVFBs("bCandidateJet2BC2PHI","Jet2BC2PHI"),
+      bCandidateJet3BC2PHI = makeIVFBs("bCandidateJet3BC2PHI","Jet3BC2PHI"),
+      bCandidateJet4BC2PHI = makeIVFBs("bCandidateJet4BC2PHI","Jet4BC2PHI"),
+      bCandidateBCDeltaR = makeIVFBs("bCandidateBCDeltaR","BCDeltaR"),
+      bCandidateBDeltaPHI = makeIVFBs("bCandidateBDeltaPHI","BDeltaPHI"),
+      bCandidateBC1MASS = makeIVFBs("bCandidateBC1MASS","BC1MASS"),
+      bCandidateBC2MASS = makeIVFBs("bCandidateBC2MASS","BC2MASS"),
    )
    setattr(process, name, eventTree)
    p = cms.Path(getattr(process,name))
    setattr(process, name+'Path', p)
 
-def addMuNuEventTreePtMC(process,name,source = 'wCandsJets',sourceZ = 'diMuonsSorted',lhep="externalLHEProducer"):
+def addMuNuEventTreePtMC(process,name,source = 'MuNuSel',sourceZ = 'diMuonsSorted',lhep="externalLHEProducer",srcMuons="smearedMuonsall", srcElectrons="smearedElectronsall"):
    process.TFileService = cms.Service("TFileService", fileName = cms.string("analysis.root") )
    eventTree = cms.EDAnalyzer('EventTreeMaker',
-      makeCollections(source,sourceZ),
-      makeJetIDInfo(source),
+      makeCollections(source = 'MuNuAll', sourceZ = 'diMuonsSorted',sourceE = 'EleNuAll', srcElectrons="smearedElectronsiall",srcMuons="smearedMuonsall"),
+      makeJetIDInfo(source="MuNuAll"),
       #makeJetCorrectionInfo(),
-      makeJetSVInfo(source),
+      makeGenJetInfo(source="MuNuAll"),
+      #makeLeptons(srcGoodMu='smearedMuonsall',srcVetoMu='smearedMuonsall',srcQCDMu='smearedMuonsall',srcGoodEle='smearedElectronsall',srcVetoEle='smearedElectronsall',srcQCDEle='smearedElectronsall'),
+      #makeLeptons(srcGoodMu='smearedMuonsgood',srcVetoMu='smearedMuonsveto',srcQCDMu='smearedMuonsqcd',srcGoodEle='smearedElectronsgood',srcVetoEle='smearedElectronsveto',srcQCDEle='smearedElectronsqcd'),
+      makeLeptons(srcGoodMu='goodMuons',srcVetoMu='vetoMuons',srcQCDMu='qcdMuons',srcGoodEle='goodElectrons',srcVetoEle='vetoElectrons',srcQCDEle='qcdElectrons'),
+      makeJetsLegit(sourceJets='smearedJetsall'),
+      makeJetsInd(sourceJets='smearedJetsall'),
+      makeMETsColl(sourceMETs = 'EleNuAll'),
+      makeMETsInd(sourceMETs = 'smearedMETall'),
+      makeJetSVInfo(source='MuNuSel'),
       coreCollections = cms.VInputTag(
-           cms.InputTag(source)
+           cms.InputTag(source),
+           cms.InputTag(srcElectrons),
+           cms.InputTag("allMuons"),
+           cms.InputTag("allElectrons"),
+           cms.InputTag('metCorrected')
       ),
+
       topweight= cms.PSet(
            pluginType = cms.string("TopWeight"),
            src = cms.InputTag("genParticles")
@@ -703,28 +1024,29 @@ def addMuNuEventTreePtMC(process,name,source = 'wCandsJets',sourceZ = 'diMuonsSo
       bHadronsEta = makeSimBHad("bhadrons","bHadronsEta","eta"),
       bHadronsPhi = makeSimBHad("bhadrons","bHadronsPhi","phi"),
   
-      # Jet pT Reco + Gen from RecoTools/plugins/PATJetSmearer.h
-      J1_pt_gen = makeJetUserFloat('pt_gen')[0],
-      J1_pt_gen_two = makeJetUserFloat('pt_gen_two')[0],
-      J1_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[0], 
-      J1_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[0], 
-      J1_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[0], 
-      J2_pt_gen = makeJetUserFloat('pt_gen')[1],
-      J2_pt_gen_two = makeJetUserFloat('pt_gen_two')[1],
-      J2_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[1], 
-      J2_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[1], 
-      J2_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[1], 
-      J3_pt_gen = makeJetUserFloat('pt_gen')[2],
-      J3_pt_gen_two = makeJetUserFloat('pt_gen_two')[2],
-      J3_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[2], 
-      J3_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[2], 
-      J3_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[2], 
-      J4_pt_gen = makeJetUserFloat('pt_gen')[3],
-      J4_pt_gen_two = makeJetUserFloat('pt_gen_two')[3],
-      J4_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[3], 
-      J4_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[3], 
-      J4_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[3], 
+      ## Jet pT Reco + Gen from RecoTools/plugins/PATJetSmearer.h
+      #J1_pt_gen = makeJetUserFloat('pt_gen')[0],
+      #J1_pt_gen_two = makeJetUserFloat('pt_gen_two')[0],
+      #J1_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[0], 
+      #J1_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[0], 
+      #J1_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[0], 
+      #J2_pt_gen = makeJetUserFloat('pt_gen')[1],
+      #J2_pt_gen_two = makeJetUserFloat('pt_gen_two')[1],
+      #J2_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[1], 
+      #J2_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[1], 
+      #J2_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[1], 
+      #J3_pt_gen = makeJetUserFloat('pt_gen')[2],
+      #J3_pt_gen_two = makeJetUserFloat('pt_gen_two')[2],
+      #J3_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[2], 
+      #J3_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[2], 
+      #J3_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[2], 
+      #J4_pt_gen = makeJetUserFloat('pt_gen')[3],
+      #J4_pt_gen_two = makeJetUserFloat('pt_gen_two')[3],
+      #J4_pt_uncorr = makeJetUserFloat('pt_uncorr','',source)[3], 
+      #J4_pt_smearedUp = makeJetUserFloat('pt_smearedUp','',source)[3], 
+      #J4_pt_smearedDown = makeJetUserFloat('pt_smearedDown','',source)[3], 
 
+      bCandidatenBC = makeIVFBs("bCandidatenBC","nBC"),
       bCandidate1Pt = makeIVFBs("bCandidate1Pt","BC1PT"),
       bCandidate2Pt = makeIVFBs("bCandidate2Pt","BC2PT"),
       bCandidate1Eta = makeIVFBs("bCandidate1Eta","BC1ETA"),
@@ -733,7 +1055,41 @@ def addMuNuEventTreePtMC(process,name,source = 'wCandsJets',sourceZ = 'diMuonsSo
       bCandidate2Phi = makeIVFBs("bCandidate2Phi","BC2PHI"),
       bCandidateDeltaR = makeIVFBs("bCandidateDeltaR","BCDeltaR"),
       bCandidateDeltaPhi = makeIVFBs("bCandidateDeltaPhi","BDeltaPHI"),
-
+      bCandidateBC1nTracks = makeIVFBs("bCandidateBC1nTracks","BC1nTracks"),
+      bCandidateBC2nTracks = makeIVFBs("bCandidateBC2nTracks","BC2nTracks"),
+      bCandidateBCEnergySum = makeIVFBs("bCandidateBCEnergySum","BCEnergySum"),
+      bCandidateBCGenEnergySum = makeIVFBs("bCandidateBCGenEnergySum","BCGenEnergySum"),
+      bCandidatenJetAssociatedToBC1 = makeIVFBs("bCandidatenJetAssociatedToBC1","nJetAssociatedToBC1"),
+      bCandidatenJetAssociatedToBC2 = makeIVFBs("bCandidatenJetAssociatedToBC2","nJetAssociatedToBC2"),
+      bCandidatenJetAssociatedToBC = makeIVFBs("bCandidatenJetAssociatedToBC","nJetAssociatedToBC"),
+      bCandidateJet1BC1PT = makeIVFBs("bCandidateJet1BC1PT","Jet1BC1PT"),
+      bCandidateJet2BC1PT = makeIVFBs("bCandidateJet2BC1PT","Jet2BC1PT"),
+      bCandidateJet3BC1PT = makeIVFBs("bCandidateJet3BC1PT","Jet3BC1PT"),
+      bCandidateJet4BC1PT = makeIVFBs("bCandidateJet4BC1PT","Jet4BC1PT"),
+      bCandidateJet1BC1ETA = makeIVFBs("bCandidateJet1BC1ETA","Jet1BC1ETA"),
+      bCandidateJet2BC1ETA = makeIVFBs("bCandidateJet2BC1ETA","Jet2BC1ETA"),
+      bCandidateJet3BC1ETA = makeIVFBs("bCandidateJet3BC1ETA","Jet3BC1ETA"),
+      bCandidateJet4BC1ETA = makeIVFBs("bCandidateJet4BC1ETA","Jet4BC1ETA"),
+      bCandidateJet1BC1PHI = makeIVFBs("bCandidateJet1BC1PHI","Jet1BC1PHI"),
+      bCandidateJet2BC1PHI = makeIVFBs("bCandidateJet2BC1PHI","Jet2BC1PHI"),
+      bCandidateJet3BC1PHI = makeIVFBs("bCandidateJet3BC1PHI","Jet3BC1PHI"),
+      bCandidateJet4BC1PHI = makeIVFBs("bCandidateJet4BC1PHI","Jet4BC1PHI"),
+      bCandidateJet1BC2PT = makeIVFBs("bCandidateJet1BC2PT","Jet1BC2PT"),
+      bCandidateJet2BC2PT = makeIVFBs("bCandidateJet2BC2PT","Jet2BC2PT"),
+      bCandidateJet3BC2PT = makeIVFBs("bCandidateJet3BC2PT","Jet3BC2PT"),
+      bCandidateJet4BC2PT = makeIVFBs("bCandidateJet4BC2PT","Jet4BC2PT"),
+      bCandidateJet1BC2ETA = makeIVFBs("bCandidateJet1BC2ETA","Jet1BC2ETA"),
+      bCandidateJet2BC2ETA = makeIVFBs("bCandidateJet2BC2ETA","Jet2BC2ETA"),
+      bCandidateJet3BC2ETA = makeIVFBs("bCandidateJet3BC2ETA","Jet3BC2ETA"),
+      bCandidateJet4BC2ETA = makeIVFBs("bCandidateJet4BC2ETA","Jet4BC2ETA"),
+      bCandidateJet1BC2PHI = makeIVFBs("bCandidateJet1BC2PHI","Jet1BC2PHI"),
+      bCandidateJet2BC2PHI = makeIVFBs("bCandidateJet2BC2PHI","Jet2BC2PHI"),
+      bCandidateJet3BC2PHI = makeIVFBs("bCandidateJet3BC2PHI","Jet3BC2PHI"),
+      bCandidateJet4BC2PHI = makeIVFBs("bCandidateJet4BC2PHI","Jet4BC2PHI"),
+      bCandidateBCDeltaR = makeIVFBs("bCandidateBCDeltaR","BCDeltaR"),
+      bCandidateBDeltaPHI = makeIVFBs("bCandidateBDeltaPHI","BDeltaPHI"),
+      bCandidateBC1MASS = makeIVFBs("bCandidateBC1MASS","BC1MASS"),
+      bCandidateBC2MASS = makeIVFBs("bCandidateBC2MASS","BC2MASS"),
       nbHadrons = makeCollSize("bhadrons","nbHadrons"),
       genTs = makeCollSize("gentCands","genTs"),
       genTbars = makeCollSize("gentbarCands","genTbars"),
@@ -755,6 +1111,7 @@ def addMuNuEventTreePtMC(process,name,source = 'wCandsJets',sourceZ = 'diMuonsSo
       weightEtaMuonIso = makeMuNu("weightEtaMuonIso","EffWEIGHTeta_IS",source,True),
       weightEtaMuonID = makeMuNu("weightEtaMuonID","EffWEIGHTeta_ID",source,True),
       weightEtaMuonTrig = makeMuNu("weightEtaMuonTrig","EffWEIGHTeta_TR",source,True),
+      GBWeight = makeGenBWeight("GBWeight","theWeight"),
    )
    setattr(process, name, eventTree)
    p = cms.Path(getattr(process,name))

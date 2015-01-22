@@ -2,38 +2,120 @@
 # Author: T.M.Perry UW-Madison
 # Moves/Merges MC files from /hdfs/... to working directory
 
-version="v4"
-cd $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/data/
-mkdir ${version}
-cd ${version}
 
-echo "merging drell"
-mergeFiles Drell.root /hdfs/store/user/$USER/merged_${version}_Drell-mergeFilesJob/*.root
-echo "merging ttbar full"
-mergeFiles TTbar_full.root /hdfs/store/user/$USER/merged_${version}_TTbar_full-mergeFilesJob/*.root 
-echo "merging ttbar semi"
-mergeFiles TTbar_semi.root /hdfs/store/user/$USER/merged_${version}_TTbar_semi-mergeFilesJob/*.root
-echo "merging single top"
-mergeFiles T_s.root /hdfs/store/user/$USER/merged_${version}_T_s-mergeFilesJob/*.root
-mergeFiles T_t_p1.root /hdfs/store/user/$USER/merged_${version}_T_t_p1-mergeFilesJob/*.root
-mergeFiles T_t_p2.root /hdfs/store/user/$USER/merged_${version}_T_t_p2-mergeFilesJob/*.root
-mergeFiles T_tW.root /hdfs/store/user/$USER/merged_${version}_T_tW-mergeFilesJob/*.root
-mergeFiles Tbar_s.root /hdfs/store/user/$USER/merged_${version}_Tbar_s-mergeFilesJob/*.root 
-mergeFiles Tbar_t.root /hdfs/store/user/$USER/merged_${version}_Tbar_t-mergeFilesJob/*.root 
-mergeFiles Tbar_tW.root /hdfs/store/user/$USER/merged_${version}_Tbar_tW-mergeFilesJob/*.root 
-echo "merging w1jet"
-mergeFiles W1Jet.root /hdfs/store/user/$USER/merged_${version}_W1Jet_josh-mergeFilesJob/*.root /hdfs/store/user/$USER/merged_${version}_W1Jet_tapas-mergeFilesJob/*.root
-echo "merging w2jet"
-mergeFiles W2Jet.root /hdfs/store/user/$USER/merged_${version}_W2Jet_josh-mergeFilesJob/*.root /hdfs/store/user/$USER/merged_${version}_W2Jet_tapas-mergeFilesJob/*.root
-echo "merging w3jet"
-mergeFiles W3Jet.root /hdfs/store/user/$USER/merged_${version}_W3Jet_p1-mergeFilesJob/*.root /hdfs/store/user/$USER/merged_${version}_W3Jet_p2-mergeFilesJob/*.root
-echo "merging w4jet"
-mergeFiles W4Jet.root /hdfs/store/user/$USER/merged_${version}_W4Jet-mergeFilesJob/*.root
-echo "merging wjets"
-mergeFiles WJets.root /hdfs/store/user/$USER/merged_${version}_WJets_p1-mergeFilesJob/*.root /hdfs/store/user/$USER/merged_${version}_WJets_p2-mergeFilesJob/*.root
-echo "merging ww"
-mergeFiles WW.root /hdfs/store/user/$USER/merged_${version}_WW-mergeFilesJob/*.root
-echo "merging wz"
-mergeFiles WZ.root /hdfs/store/user/$USER/merged_${version}_WZ-mergeFilesJob/*.root
-echo "merging zz"
-mergeFiles ZZ.root /hdfs/store/user/$USER/merged_${version}_ZZ-mergeFilesJob/*.root
+# Drell
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_Drell-mergeFilesJob \
+   mergedFinal_${version}_Drell \
+   $CMSSW_BASE
+
+# Single Top
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_T_t-mergeFilesJob \
+   mergedFinal_${version}_T_t \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_Tbar_t-mergeFilesJob \
+   mergedFinal_${version}_Tbar_t \
+   $CMSSW_BASE
+
+# WJets
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_WJets_p1-mergeFilesJob \
+   mergedFinal_${version}_WJets_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_WJets_p2-mergeFilesJob \
+   mergedFinal_${version}_WJets_p2 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W1Jet_p1-mergeFilesJob \
+   mergedFinal_${version}_W1Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W1Jet_p2-mergeFilesJob \
+   mergedFinal_${version}_W1Jet_p2 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W2Jet_p1-mergeFilesJob \
+   mergedFinal_${version}_W2Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W2Jet_p2-mergeFilesJob \
+   mergedFinal_${version}_W2Jet_p2 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W3Jet_p1-mergeFilesJob \
+   mergedFinal_${version}_W3Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W3Jet_p2-mergeFilesJob \
+   mergedFinal_${version}_W3Jet_p2 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_W4Jet-mergeFilesJob \
+   mergedFinal_${version}_W4Jet \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_Wbb4F-mergeFilesJob \
+   mergedFinal_${version}_Wbb4F \
+   $CMSSW_BASE
+
+# Dibosons
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_WW-mergeFilesJob \
+   mergedFinal_${version}_WW \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_WZ-mergeFilesJob \
+   mergedFinal_${version}_WZ \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_ZZ-mergeFilesJob \
+   mergedFinal_${version}_ZZ \
+   $CMSSW_BASE

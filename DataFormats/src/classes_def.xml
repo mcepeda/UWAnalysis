@@ -291,10 +291,18 @@
   <class name="BCandFinalStateRefVector"/>
   <class name="edm::Wrapper<BCandFinalStateCollection>"/>
 
-   <class name="DressedLepton"/>
-      <class name="DressedLeptonCollection"/>
-         <class name="DressedLeptonRefProd"/>
-            <class name="DressedLeptonRefVector"/>
-               <class name="edm::Wrapper<DressedLeptonCollection>"/>
+  <!-- create dictionaries for Dressed Leptons -->
+  <class name="DressedLepton"/>
+  <class name="DressedLeptonCollection"/>
+  <class name="DressedLeptonRefProd"/>
+  <class name="DressedLeptonRefVector"/>
+  <class name="edm::Wrapper<DressedLeptonCollection>"/>
+
+  <!-- create dictionaries for BCandFinalState objects -->
+  <class name="GenBDWeight"/>
+  <class name="GenBDWeightCollection"/>
+  <class name="GenBDWeightRefProd"/>
+  <class name="GenBDWeightRefVector"/>
+  <class name="edm::Wrapper<GenBDWeightCollection>"/>
 
 </lcgdict>

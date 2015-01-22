@@ -36,6 +36,9 @@ git cms-addpkg RecoVertex/AdaptiveVertexFinder
 git cms-addpkg RecoEgamma/EgammaTools
 
 git cms-addpkg EgammaAnalysis/ElectronTools
+pushd EgammaAnalysis/ElectronTools/data
+cat download.url | xargs wget
+popd
 
 git cms-addpkg DataFormats/METReco  
 git cms-addpkg RecoTauTag/RecoTau

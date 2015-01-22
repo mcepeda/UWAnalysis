@@ -7,6 +7,7 @@ import ROOT
 from ROOT import THStack,TH1F,TFile
 from ROOT import TLegend,TCanvas,TPad,TLatex,TLine
 from ROOT import gROOT,gStyle
+import os
 import histoRange as hr
 import cmsPrelim as cpr
 import TheParameters as p
@@ -132,7 +133,8 @@ for leaf in leafs:
   log.close()
 
   c = TCanvas('c','Canvas Named c',canx,cany)
-  path = '../plots/PS4_v2_'
+  version = os.environ.get('version')
+  path = '../plots/%s_'%(version)
   print(path+i)
   theFile = TFile(path+i+'.root')
   

@@ -12,6 +12,9 @@ from RecoBTag.ImpactParameter.impactParameter_cff import *
 from RecoBTag.SecondaryVertex.secondaryVertex_cff import *
 from JetMETCorrections.Type1MET.pfMETCorrections_cff import *
 
+from RecoJets.JetProducers.GenJetParameters_cfi import *
+from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
+
 def defaultReconstructionPT(process,triggerProcess = 'HLT',triggerPaths = ['HLT_Mu9','HLT_Mu11_PFTau15_v1','HLT_Mu11_PFTau15_v1','HLT_Mu11_PFTau15_v2','HLT_Mu15_v1','HLT_Mu15_v2'],itsMC=False,itsData=False):
   process.load("UWAnalysis.Configuration.startUpSequence_cff")
   process.load("Configuration.Geometry.GeometryIdeal_cff")
@@ -31,54 +34,49 @@ def defaultReconstructionPT(process,triggerProcess = 'HLT',triggerPaths = ['HLT_
   muonTriggerMatchPT(process,triggerProcess) 
   electronTriggerMatchPT(process,triggerProcess)  
   tauTriggerMatchPT(process,triggerProcess)    
-
-  #Build good vertex collection
   goodVertexFilter(process)       
-
-#  process.simpleSecondaryVertex = cms.ESProducer("SimpleSecondaryVertexESProducer",
-#      use3d = cms.bool(True),
-#      unBoost = cms.bool(False),
-#      useSignificance = cms.bool(True),
-#      minTracks = cms.uint32(2)
-#  )
   
-  # reRun Jets 
-  #reRunJets(process,isMC=itsMC,isData=itsData)
+  # leptons
+  #rochesterCorrector(process,muons="cleanPatMuons")
+  #muScleCorrector(process,muons="cleanPatMuons",isMC=itsMC)
+  #electronEnergyCorrector(process,'cleanPatElectrons')
+
+  muonIDer(process,muons="cleanPatMuons")
+  eleIsolater(process,electrons="cleanPatElectrons")
+  leptonSFer(process,muons="IDedMuons",electrons="IsoedElectrons")
+  #leptonSFer(process,muons="IDedMuons",electrons="cleanPatElectrons")
+
+  # met
+  metAndmT(process,met='systematicsMET',muons="muAvecSF",electrons="eleAvecSF",isMC=itsMC)
+  wgtPUembedding(process,"metCorrected","primaryVertexFilter","addPileupInfo")
+  #vertexEmbedding(process,"IDedMuons","primaryVertexFilter","addPileupInfo")
+
+  # jets
   if itsMC:
+   genLevel(process)
    resolutionSmearJets(process,jets='selectedPatJetsAK5chsPF')
   elif itsData:
    ReNameJetColl(process,inputJets='selectedPatJetsAK5chsPF')
 
-  # type 1 met correction 
-  metCorrector(process,met='systematicsMET',jets123='resolutionSmearedJets')
-  #metRenamer(process,met='systematicsMET')
-  #officialMetCorrector(process,met='systematicsMET',jets='resolutionSmearedJets',isMC=False)
-
   jetOverloading(process,"resolutionSmearedJets")
-#  jetOverloading(process,"NewSelectedPatJets")
-
   jetPUEmbedding(process,"patOverloadedJets")
-  rochesterCorrector(process,muons="cleanPatMuons")
-  #muonIDer(process,"rochCorMuons")
 
-  #SVReconstruction(process,"patPUEmbeddedJets","cleanPatMuons",isMC=itsMC,isData=itsData)
-  #applyDefaultSelectionsPT(process,"patBRecoJets","cleanPatMuons")
+   # btag
+  SVReconstruction(process,"patPUEmbeddedJets",isMC=itsMC,isData=itsData)
+  #SVReconstruction(process,"patPUEmbeddedJets","rochCorMuons",isMC=itsMC,isData=itsData)
 
-  SVReconstruction(process,"patPUEmbeddedJets","rochCorMuons",isMC=itsMC,isData=itsData)
-  muonIDer(process,muons="rochCorMuons")
-  #mtMaker(process,muons="IDedMuons",met="metTypeOne")
-  applyDefaultSelectionsPT(process,"patBRecoJets","IDedMuons")
-  #applyDefaultSelectionsPT(process,"patBRecoJets","rochCorMuons")
-
-  #applyDefaultSelectionsPT(process,"patPUEmbeddedJets","IDedMuons")
-  #applyDefaultSelectionsPT(process,"patPUEmbeddedJets","rochCorMuons")
+   # cleaning
+  applyDefaultSelectionsPT(process,"patBRecoJets","mtMuons","mtEles")
+  #applyDefaultSelectionsPT(process,"patCSVreweightedJets","mtMuons","mtEles")
 
   process.runAnalysisSequence = cms.Path(process.analysisSequence)
+  #jetReading(process,jets='patBRecoJets')
 
   #mvaMet(process) #Build MVA MET
+  IVF(process)
   if itsMC:
-   genHadrons(process)  
-   IVF(process)
+   genHadrons(process) 
+   GenBWeight(process) 
 
 
 def muonTriggerMatchPT(process,triggerProcess):
@@ -190,6 +188,97 @@ def goodVertexFilter(process):
   )
   process.goodVertexFilterSeq = cms.Sequence(process.primaryVertexFilter)
   process.goodVertexFilterPath=cms.Path(process.goodVertexFilterSeq)
+
+
+def genLevel(process):
+  process.load("RecoJets.Configuration.GenJetParticles_cff")
+  process.load("RecoJets.JetProducers.ak5GenJets_cfi")
+  
+  process.genParticlesNoNeutrinos = cms.EDProducer("GenParticlePruner",
+      src = cms.InputTag("genParticles"),
+      select = cms.vstring(
+          "drop  *", # this is the default
+          "keep status = 1 ",
+          "drop abs(pdgId) = 12", "drop abs(pdgId) = 14", "drop abs(pdgId) = 16"
+      )
+  )
+  
+  process.neutrinos = cms.EDProducer("GenParticlePruner",
+      src = cms.InputTag("genParticles"),
+      select = cms.vstring(
+          "drop  *", # this is the default
+          "keep abs(pdgId) = 12 & status =1 ", "keep abs(pdgId) = 14 & status =  1", "keep abs(pdgId) = 16 & status = 1"
+      )
+  )
+  process.GenJetParameters.src=cms.InputTag("genParticlesNoNeutrinos")
+  
+  process.ak5GenJetsNoNu = cms.EDProducer(
+       "FastjetJetProducer",
+       GenJetParameters,
+       AnomalousCellParameters,
+       jetAlgorithm = cms.string("AntiKt"),
+       rParam       = cms.double(0.5)
+       )
+  
+  process.partonJetsSeq=cms.Sequence(process.genParticlesNoNeutrinos*process.ak5GenJetsNoNu*process.neutrinos)
+  
+  process.LHEFilter = cms.EDFilter("GenFilterLHE",
+          PartonMultiplicity=cms.untracked.int32(0),
+          PartonMultiplicityMAX=cms.untracked.int32(20),
+  )
+  
+  # Produce PDF weights (maximum is 3)
+  process.pdfWeights = cms.EDProducer("PdfWeightProducer",
+        # Fix MADGRAPH if buggy (this PDF set will also appear on output, 
+        # so only two more PDF sets can be added in PdfSetNames if not "")
+        FixMADGRAPH = cms.untracked.int32(3),
+        GenTag = cms.untracked.InputTag("genParticles"),
+        PdfInfoTag = cms.untracked.InputTag("generator"),
+        PdfSetNames = cms.untracked.vstring(
+               "CT10.LHgrid",
+  #             "MSTW2008nlo68cl.LHgrid",
+  #             "cteq66.LHgrid",
+               "MSTW2008nnlo68cl.LHgrid",
+               "cteq6ll.LHpdf" ,
+        )
+  )
+  
+  process.bhadrons = cms.EDProducer('MCBHadronProducer',
+                                    quarkId = cms.uint32(5)
+                                    )
+  
+  process.btaggedGenJets= cms.EDProducer('GENJetBtagger',
+                                  src=cms.InputTag("ak5GenJetsNoNu"),
+                                  srcSIMB=cms.InputTag("bhadrons")
+  )
+  
+  process.cleanGenJets= cms.EDProducer('GenJetCleaner',
+                                  src=cms.InputTag("btaggedGenJets"),
+                                  srcDressedLepton=cms.InputTag("dressedLeptons"),
+                                  onlyGoodLeptons=cms.bool(True)
+  )
+  
+  process.dressedLeptons = cms.EDProducer("DressedGenLeptonsProducer",
+                                  src= cms.InputTag("genParticles"),
+  #                                genPDGID= cms.untracked.int32(0), # 0 --> muons and electrons,  13 --> muons  11--> electrons
+  #                                genSTATUS= cms.untracked.int32(1)
+                                   minPT = cms.untracked.double(0),
+                                   maxETA = cms.untracked.double(10),
+  )
+  
+  
+  process.cleanGenJetsAndrea= cms.EDProducer('GenJetCleaner',
+                                  src=cms.InputTag("btaggedGenJets"),
+                                  srcDressedLepton=cms.InputTag("dressedLeptons"),
+                                  onlyGoodLeptons=cms.bool(False),
+                                  excludeTaus=cms.untracked.bool(True)
+  )
+  process.genSeq = cms.Sequence(process.partonJetsSeq*process.dressedLeptons*process.bhadrons*process.btaggedGenJets*process.cleanGenJets*process.cleanGenJetsAndrea*process.LHEFilter)
+  process.genPath = cms.Path(process.genSeq)
+  return process.genPath
+
+
+ 
 
 
 def reRunJets(process,isMC=False,isData=False,L1Only=False): 
@@ -358,7 +447,8 @@ def reRunJets(process,isMC=False,isData=False,L1Only=False):
   return process.reRunJetPath
 
 
-def resolutionSmearJets(process,jets='NewSelectedPatJets',genJets='ak5GenJets'):
+#def resolutionSmearJets(process,jets='NewSelectedPatJets',genJets='ak5GenJets'):
+def resolutionSmearJets(process,jets='NewSelectedPatJets',genJets='ak5GenJetsNoNu'):
   process.resolutionSmearedJets = cms.EDProducer("PATJetSmearer",
    src = cms.InputTag(jets),
    genJet = cms.InputTag(genJets)
@@ -376,6 +466,15 @@ def ReNameJetColl(process, inputJets="selectedPatJets"):
   return process.reNameJetPath
 
 
+def PFtoPAT(process,inputJets='ak5PFchsJets'):
+  process.tomsPatJets = cms.EDProducer("PFtoPAT",
+   src=cms.InputTag(inputJets)
+  )
+  process.tomsPatJetsSeq = cms.Sequence(process.tomsPatJets)
+  process.tomsPatJetsPath= cms.Path(process.tomsPatJetsSeq)
+  return process.tomsPatJetsPath
+
+
 def metRenamer(process,met='systematicsMET'):
   process.metTypeOne = cms.EDProducer("PATMETRenamer",
    src = cms.InputTag(met),
@@ -385,14 +484,54 @@ def metRenamer(process,met='systematicsMET'):
   return process.metTypeOnePath
 
 
-def metCorrector(process,met='systematicsMET',jets123='NewSelectedPatJets'):
-  process.metTypeOne = cms.EDProducer("PATMETTypeOne",
-   srcMET = cms.InputTag(met),
-   srcJ123 = cms.InputTag(jets123)
+def leptonSFer(process,muons="IDedMuons",electrons="cleanPatElectrons"):
+  process.eleAvecSF = cms.EDProducer("PATeleSFer",
+   src = cms.InputTag(electrons),
   )
-  process.metTypeOneSeq = cms.Sequence(process.metTypeOne)
-  process.metTypeOnePath= cms.Path(process.metTypeOneSeq)
-  return process.metTypeOnePath
+  process.muAvecSF = cms.EDProducer("PATmuonSFer",
+   src = cms.InputTag(muons),
+  )
+  
+  process.leptonSFSeq = cms.Sequence(process.eleAvecSF + process.muAvecSF) 
+  process.leptonSFPath= cms.Path(process.leptonSFSeq)
+  return process.leptonSFPath
+
+def metAndmT(process,met='systematicsMET',muons="IDedMuons",electrons="cleanPatElectrons",isMC=False):
+  process.metCorrected = cms.EDProducer("PATMETCorrector",
+   srcMET = cms.InputTag(met),
+   isMC = cms.bool(isMC)
+  )
+  process.mtMuons = cms.EDProducer("PATmTmuonCalculator",
+   srcMuon = cms.InputTag( muons ),
+   srcMET = cms.InputTag( "metCorrected" )
+  )
+  process.mtEles = cms.EDProducer("PATmTeleCalculator",
+   srcEle = cms.InputTag( electrons ),
+   srcMET = cms.InputTag( "metCorrected" ) 
+  )
+  process.metCorrectedSeq = cms.Sequence(process.metCorrected)
+  process.mtMuonsSeq = cms.Sequence(process.mtMuons)
+  process.mtElesSeq = cms.Sequence (process.mtEles)
+  process.metAndmTPath = cms.Path(process.metCorrected + process.mtMuonsSeq + process.mtElesSeq)
+  return process.metAndmTPath
+
+
+def metCorrector(process,met='systematicsMET',jets123='NewSelectedPatJets',isMC=False):
+  process.selectedVerticesForMEtCorr = cms.EDFilter("VertexSelector",
+   src = cms.InputTag('offlinePrimaryVertices'),
+   cut = cms.string("isValid & ndof >= 4 & chi2 > 0 & tracksSize > 0 & abs(z) < 24 & abs(position.Rho) < 2."),
+   filter = cms.bool(False)
+  )
+
+  process.metCorrected = cms.EDProducer("PATMETCorrector",
+   srcMET = cms.InputTag(met),
+   srcJ123 = cms.InputTag(jets123),
+   srcVert = cms.InputTag("selectedVerticesForMEtCorr"),
+   mc = cms.bool(isMC)
+  )
+  process.metCorrectedSeq = cms.Sequence(process.selectedVerticesForMEtCorr * process.metCorrected)
+  process.metCorrectedPath= cms.Path(process.metCorrectedSeq)
+  return process.metCorrectedPath
 
 
 def officialMetCorrector(process,met='systematicsMET',jets='NewSelectedPatJets',isMC=False):
@@ -416,6 +555,39 @@ def officialMetCorrector(process,met='systematicsMET',jets='NewSelectedPatJets',
    #* process.patType1p2CorrectedPFMet
   )
   process.metCorrPath= cms.Path(process.metCorrSeq)
+  return process.metCorrPath
+
+
+def updatedOfficialMetCorrector(process,isMC=False):
+  process.load("JetMETCorrections.Type1MET.correctionTermsCaloMet_cff")
+  process.load("JetMETCorrections.Type1MET.correctionTermsPfMetType1Type2_cff")
+  if isMC: process.corrPfMetType1.jetCorrLabel = cms.string("ak5PFL1FastL2L3")
+  else: process.corrPfMetType1.jetCorrLabel = cms.string("ak5PFL1FastL2L3Residual")
+  process.load("JetMETCorrections.Type1MET.correctionTermsPfMetType0PFCandidate_cff")
+  process.load("JetMETCorrections.Type1MET.correctionTermsPfMetType0RecoTrack_cff")
+  process.load("JetMETCorrections.Type1MET.correctionTermsPfMetShiftXY_cff")
+  if isMC: process.corrPfMetShiftXY.parameter = process.pfMEtSysShiftCorrParameters_2012runABCDvsNvtx_mc
+  else: process.corrPfMetShiftXY.parameter = process.pfMEtSysShiftCorrParameters_2012runABCDvsNvtx_data
+  process.load("JetMETCorrections.Type1MET.correctedMet_cff")
+  process.metCorrPath = cms.Path(
+  process.correctionTermsPfMetType1Type2 +
+  process.correctionTermsPfMetType0RecoTrack +
+  process.correctionTermsPfMetType0PFCandidate +
+  process.correctionTermsPfMetShiftXY +
+  process.correctionTermsCaloMet +
+  process.caloMetT1 +
+  process.caloMetT1T2 +
+  process.pfMetT0rt +
+  process.pfMetT0rtT1 +
+  process.pfMetT0pc +
+  process.pfMetT0pcT1 +
+  process.pfMetT0rtTxy +
+  process.pfMetT0rtT1Txy +
+  process.pfMetT0pcTxy +
+  process.pfMetT0pcT1Txy +
+  process.pfMetT1 +
+  process.pfMetT1Txy
+  )
   return process.metCorrPath
 
 
@@ -459,6 +631,45 @@ def rochesterCorrector(process,muons="cleanPatMuons",rochCor="RochCor2012"):
   return process.rochCorMuonsPath
 
 
+def muScleCorrector(process,muons="cleanPatMuons",isMC=False):
+  if isMC: 
+    muScleID = "Summer12_DR53X_smearReReco"
+  else:
+    muScleID = "Data2012_53X_ReReco"
+  process.muScleMuons = cms.EDProducer("MuScleFitPATMuonCorrector",
+                        src = cms.InputTag(muons),
+                        debug = cms.bool(False),
+                        identifier = cms.string(muScleID),
+                        applySmearing = cms.bool(isMC),
+                        fakeSmearing = cms.bool(False)
+                        )
+  process.muScleMuonsSeq = cms.Sequence(process.muScleMuons)
+  process.muScleMuonsPath= cms.Path(process.muScleMuonsSeq)
+  return process.muScleMuonsPath
+
+
+def electronEnergyCorrector(process,electrons = 'cleanPatElectrons'):
+  process.energyCorrectedElectrons = cms.EDProducer("RegressionEnergyPatElectronProducer",
+    nameEnergyErrorReg = cms.string('eneErrorRegForGsfEle'),
+    rhoCollection = cms.InputTag("kt6PFJets","rho","RECO"),
+    inputElectronsTag = cms.InputTag(electrons),
+    nameEnergyReg = cms.string('eneRegForGsfEle'),
+    produceValueMaps = cms.bool(False),
+    vertexCollection = cms.InputTag("offlinePrimaryVertices"),
+    inputCollectionType = cms.uint32(1),
+    regressionInputFile = cms.string('EgammaAnalysis/ElectronTools/data/eleEnergyRegWeights_WithSubClusters_VApr15.root'),
+    energyRegressionType = cms.uint32(2),
+    debug = cms.untracked.bool(False),
+    recHitCollectionEE = cms.InputTag("reducedEcalRecHitsEE"),
+    recHitCollectionEB = cms.InputTag("reducedEcalRecHitsEB"),
+    useRecHitCollections = cms.bool(False)
+    #useRecHitCollections = cms.bool(True)
+  )
+  process.energyCorrectedElectronsSeq = cms.Sequence(process.energyCorrectedElectrons)
+  process.energyCorrectedElectronsPath= cms.Path(process.energyCorrectedElectronsSeq)
+  return process.energyCorrectedElectronsPath
+
+
 def muonIDer(process,muons="cleanPatMuons"):
   process.IDedMuons = cms.EDProducer("PATMuonIDer",
    src = cms.InputTag( muons ),
@@ -468,20 +679,56 @@ def muonIDer(process,muons="cleanPatMuons"):
   return process.IDedMuonPath
 
 
-def mtMaker(process,muons="IDedMuons",met="metTypeOne"):
-  process.mtMuons = cms.EDProducer("PATmTCalculator",
+def eleIsolater(process,electrons="cleanPatElectrons"):
+  process.IsoedElectrons = cms.EDProducer("PATeleIsoEmbedder",
+   src = cms.InputTag( electrons ),
+  )
+  process.IsoedElectronsSeq = cms.Sequence(process.IsoedElectrons)
+  process.IsoedElectronsPath= cms.Path(process.IsoedElectronsSeq)
+  return process.IsoedElectronsPath
+
+
+#def vertexEmbedding(process,muons="IDedMuons",vertices="primaryVertexFilter",pu="addPileupInfo"):
+#  process.vertexEmbeddedMuons = cms.EDProducer("PATMuonVertexWeighter",
+#   srcMuon = cms.InputTag( muons ),
+#   srcVert = cms.InputTag( vertices ),
+#   srcPU   = cms.InputTag( pu )
+#  )
+#  process.vertexEmbeddedMuonSeq = cms.Sequence(process.vertexEmbeddedMuons)
+#  process.vertexEmbeddedMuonPath= cms.Path(process.vertexEmbeddedMuonSeq)
+#  return process.vertexEmbeddedMuonPath
+
+def wgtPUembedding(process,met="",vertices="primaryVertexFilter",pu="addPileupInfo"):
+  process.wgtPUembedMET = cms.EDProducer("PATMETVertexWeighter",
+   srcMET = cms.InputTag( met ),
+   srcVert = cms.InputTag( vertices ),
+   srcPU   = cms.InputTag( pu )
+  )
+  process.wgtPUembedMETSeq = cms.Sequence(process.wgtPUembedMET)
+  process.wgtPUembedMETPath= cms.Path(process.wgtPUembedMETSeq)
+  return process.wgtPUembedMETPath
+
+
+def mtMaker(process,muons="IDedMuons", electrons="cleanPatElectrons", met="metCorrected"):
+  process.mtMuons = cms.EDProducer("PATmTmuonCalculator",
    srcMuon = cms.InputTag( muons ),
    srcMET = cms.InputTag( met )
   )
+  process.mtEles = cms.EDProducer("PATmTeleCalculator",
+   srcEle = cms.InputTag( electrons ),
+   srcMET = cms.InputTag( met ) 
+  )
   process.mtMuonsSeq = cms.Sequence(process.mtMuons)
-  process.mtMuonsPath= cms.Path(process.mtMuonsSeq)
-  return process.mtMuonsPath
+  process.mtElesSeq = cms.Sequence (process.mtEles)
+  process.mtMakerPath= cms.Path(process.mtMuonsSeq + process.mtElesSeq)
+  return process.mtMakerPath
 
 
-def SVReconstruction(process,jets,muons,isMC=False,isData=False): 
+#def SVReconstruction(process,jets,muons,isMC=False,isData=False): 
+def SVReconstruction(process,jets,isMC=False,isData=False): 
   process.SVFoundJets=cms.EDProducer("bTagSFer",
     src = cms.InputTag(jets),
-    leptons = cms.InputTag(muons),
+    #leptons = cms.InputTag(muons),
     vertices=cms.InputTag("offlinePrimaryVertices") 
   )
   process.patSSVJets=cms.EDProducer("PATSSVJetEmbedder", 
@@ -490,84 +737,182 @@ def SVReconstruction(process,jets,muons,isMC=False,isData=False):
   process.patSSVJets2=cms.EDProducer("PATCSVVertex",
    src = cms.InputTag("patSSVJets")
   )
-  if isMC:
-   process.patBpmRecoJets = cms.EDProducer('PATJetBpmReco', 
-    src = cms.InputTag("patSSVJets2"), 
-    leptons = cms.InputTag(muons), 
-    vertices=cms.InputTag("offlinePrimaryVertices") 
-   )
-  if isData:
-   process.patBpmRecoJets = cms.EDProducer('PATJetBpmReco', 
-   #process.patBpmRecoJets = cms.EDProducer('PATJetBpmRecoData', 
-    src = cms.InputTag("patSSVJets2"),
-    leptons = cms.InputTag(muons), 
-    vertices=cms.InputTag("offlinePrimaryVertices")
-   ) 
+  process.patBpmRecoJets = cms.EDProducer('PATJetBpmReco', 
+   src = cms.InputTag("patSSVJets2"), 
+   vertices=cms.InputTag("offlinePrimaryVertices") 
+  )
   process.patBRecoJets = cms.EDProducer('PATJetBReco', 
-   #src = cms.InputTag("patSSVJets2"), 
    src = cms.InputTag("patBpmRecoJets"), 
-   leptons = cms.InputTag(muons), 
    vertices=cms.InputTag("offlinePrimaryVertices") 
   ) 
+  #process.patCSVreweightedJets = cms.EDProducer('PATJetCSVreweight',
+  # src = cms.InputTag("patBRecoJets")
+  #)
+  
   process.BReconstruction = cms.Sequence(
-   process.SVFoundJets*
-   process.patSSVJets*
-   process.patSSVJets2*
-   process.patBpmRecoJets*
-   process.patBRecoJets
+   process.SVFoundJets *
+   process.patSSVJets *
+   process.patSSVJets2 *
+   process.patBpmRecoJets *
+   process.patBRecoJets 
+   #process.patCSVreweightedJets
   ) 
   process.createBRecoJets=cms.Path(process.BReconstruction) 
   return process.createBRecoJets 
 
 
-def applyDefaultSelectionsPT(process,jets,muons):
+def applyDefaultSelectionsPT(process,jets,muons,electrons):
   process.selectedPatTaus = cms.EDFilter("PATTauSelector",
    src = cms.InputTag("cleanPatTaus"),
    cut = cms.string('pt>15&&tauID("byLooseIsolationMVA")&&tauID("againstElectronLoose")&&tauID("againstMuonLoose")'),
    filter = cms.bool(False)
    )
-  process.preselectedPatElectrons = cms.EDFilter("PATElectronSelector",
-   src = cms.InputTag("cleanPatElectrons"),
-   cut = cms.string('pt>10&&userFloat("wp95")>0'),
+
+  electronLooseID = \
+      '((' \
+      'abs(superCluster.eta) < 1.442 &&' \
+      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.007 &&' \
+      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.15 &&' \
+      'sigmaIetaIeta < 0.01 &&' \
+      'hadronicOverEm < 0.12' \
+      ')||(' \
+      'abs(superCluster.eta) > 1.566 && abs(superCluster.eta) < 2.5 &&' \
+      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.009 &&' \
+      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.10 &&' \
+      'sigmaIetaIeta < 0.03 &&' \
+      'hadronicOverEm < 0.10' \
+      ')) &&' \
+      'abs(dB) < 0.02 &&' \
+      'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &&' \
+      'passConversionVeto &&' \
+      'gsfTrack.trackerExpectedHitsInner.numberOfHits <= 1 &&' \
+      'triggerObjectMatches.size >= 0'
+  electronTightID =  \
+      '((' \
+      'abs(superCluster.eta) < 1.442 &&' \
+      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.004 &&' \
+      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.03 &&' \
+      'sigmaIetaIeta < 0.01 &&' \
+      'hadronicOverEm < 0.12' \
+      ')||(' \
+      'abs(superCluster.eta) > 1.566 && abs(superCluster.eta) < 2.5 &&' \
+      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.005 &&' \
+      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.02 &&' \
+      'sigmaIetaIeta < 0.03 &&' \
+      'hadronicOverEm < 0.10' \
+      ')) &&' \
+      'abs(dB) < 0.02 &&' \
+      'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &&' \
+      'passConversionVeto &&' \
+      'gsfTrack.trackerExpectedHitsInner.numberOfHits < 1'
+  #electronIso = '(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et'
+  electronIso = 'userFloat("Iso03")'
+  electronLooseIso = electronIso+' < 0.15'
+  electronTightIso = electronIso+' < 0.10 '
+  electronAntiIso  = electronIso+' > 0.15 '
+
+  muonLooseID = ' userFloat("looseID")>0 '
+  muonTightID = ' userInt("tightID")==1 '
+  muonIso = '(pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt'
+  muonLooseIso = muonIso+' < 0.20 '
+  muonTightIso = muonIso+' < 0.12 '
+  muonAntiIso  = muonIso+' > 0.20 '
+
+  process.allMuons = cms.EDFilter("PATMuonSelector",
+   src = cms.InputTag( muons ),
+   cut = cms.string(""),
    filter = cms.bool(False)
-   )
-  process.QCDvetoPatMuons = cms.EDFilter("PATMuonSelector",
-   src = cms.InputTag(muons),
-   cut = cms.string('pt>10 && userFloat("looseID")>0'), # LooseID, No Iso for Muon Veto
+  )
+  process.allElectrons = cms.EDFilter("PATElectronSelector",
+   src = cms.InputTag( electrons ),
+   cut = cms.string(""),
    filter = cms.bool(False)
+  )
+  process.goodMuons = cms.EDFilter("PATMuonSelector",
+   src = cms.InputTag( muons ),
+   cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(muonTightIso,muonTightID)),
+   filter = cms.bool(False),
+  )
+  process.goodElectrons = cms.EDFilter("PATElectronSelector",
+   src = cms.InputTag( electrons ),
+   #cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronTightIso,electronTightID)),
+   cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronTightIso,electronTightID)),
+   filter = cms.bool(False),
+  )
+  process.vetoMuons = cms.EDFilter("PATMuonSelector",
+   src = cms.InputTag( muons ),
+   cut = cms.string('pt>10 && abs(eta)<2.4 && %s && %s'%(muonLooseIso,muonLooseID)),
+   filter = cms.bool(False),
+  )
+  process.vetoElectrons = cms.EDFilter("PATElectronSelector",
+   src = cms.InputTag( electrons ),
+   cut = cms.string('pt>10 && abs(eta)<2.4 && %s && %s'%(electronLooseIso,electronLooseID)),
+   filter = cms.bool(False),
+  )
+  process.qcdMuons = cms.EDFilter("PATMuonSelector",
+   src = cms.InputTag( muons ),
+   cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(muonAntiIso,muonTightID)),
+   filter = cms.bool(False),
+  )
+  process.qcdElectrons = cms.EDFilter("PATElectronSelector",
+   src = cms.InputTag( electrons ),
+   #cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronAntiIso,electronTightID)),
+   cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronAntiIso,electronTightID)),
+   filter = cms.bool(False),
+  )
+
+  process.allJets = cms.EDProducer("PATJetCleaner",
+   src = cms.InputTag(jets),
+   preselection = cms.string(''),
+   checkOverlaps = cms.PSet( 
+       muons = cms.PSet(
+        src = cms.InputTag(muons),
+        algorithm = cms.string("byDeltaR"),
+        preselection = cms.string(
+          'pt > 30 && abs(eta) < 2.1 && %s && %s'%(muonTightIso,muonTightID)
+        ),
+        deltaR = cms.double(0.5),
+        checkRecoComponents = cms.bool(False),
+        pairCut = cms.string(""),
+        requireNoOverlaps = cms.bool(False),
+       ),
+       electrons = cms.PSet(
+        src = cms.InputTag( electrons ),
+        algorithm = cms.string("byDeltaR"),
+        preselection = cms.string(
+          'pt > 30 && abs(eta) < 2.1 && %s && %s'%(electronTightIso,electronTightID)
+        ),
+        deltaR = cms.double(0.5),
+        checkRecoComponents = cms.bool(False),
+        pairCut = cms.string(""),
+        requireNoOverlaps = cms.bool(False),
+       ),
+   ),
+   finalCut = cms.string('')
    )
-  process.preselectedPatMuons = cms.EDFilter("PATMuonSelector",
-   src = cms.InputTag(muons),
-   cut = cms.string('pt>10 && userFloat("looseID")>0 && (pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt<0.2'), # LooseID, Loose Iso for Muon Veto
-   filter = cms.bool(False)
-   )
-  process.selectedPatElectrons = cms.EDFilter("PATElectronSelector",
-   src = cms.InputTag("cleanPatElectrons"),
-   cut = cms.string('pt>10&&userFloat("wp95")>0&&(userIso(0)+max(photonIso+neutralHadronIso()-0.5*userIso(2),0.0))/pt()<0.2'),
-   filter = cms.bool(False)
-   )
-  process.selectedPatMuons = cms.EDFilter("PATMuonSelector",
-   src = cms.InputTag(muons),
-   cut = cms.string('pt>10 && userInt("tightID")==1'), # Tight ID, No Iso for GOOD, QCD
-   filter = cms.bool(False)
-   )
-  process.cleanPatJets = cms.EDProducer("PATJetCleaner",
+
+  process.cleanJets = cms.EDProducer("PATJetCleaner",
    src = cms.InputTag(jets),
    preselection = cms.string('abs(eta)<5.0&&pt>20&&userFloat("idLoose")>0'),
    checkOverlaps = cms.PSet( 
        muons = cms.PSet(
         src = cms.InputTag(muons),
         algorithm = cms.string("byDeltaR"),
-        preselection = cms.string('pt>10 && userInt("tightID") && (pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt<0.2'), #TightID, Loose Iso
+        preselection = cms.string(
+          'pt > 30 && abs(eta) < 2.1 && %s && %s'%(muonTightIso,muonTightID)
+        ),
         deltaR = cms.double(0.5),
         checkRecoComponents = cms.bool(False),
         pairCut = cms.string(""),
         requireNoOverlaps = cms.bool(True),
        ),
        electrons = cms.PSet(
-        src = cms.InputTag("cleanPatElectrons"),
+        src = cms.InputTag( electrons ),
         algorithm = cms.string("byDeltaR"),
-        preselection = cms.string('pt>10&&userFloat("wp95")>0&&(userIso(0)+max(photonIso+neutralHadronIso()-0.5*userIso(2),0.0))/pt()<0.2'),
+        preselection = cms.string(
+          #'pt > 30 && abs(eta) < 2.1 && %s && %s'%(electronTightIso,electronTightID)
+          'pt > 30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronTightIso,electronTightID)
+        ),
         deltaR = cms.double(0.5),
         checkRecoComponents = cms.bool(False),
         pairCut = cms.string(""),
@@ -576,9 +921,105 @@ def applyDefaultSelectionsPT(process,jets,muons):
    ),
    finalCut = cms.string('')
    )	
-  process.selectedObjectsForSyst = cms.Sequence(process.preselectedPatMuons+process.preselectedPatElectrons+process.selectedPatElectrons+process.selectedPatMuons+process.cleanPatJets)
-  #process.selectedObjectsForSyst = cms.Sequence(process.selectedPatTaus+process.preselectedPatMuons+process.preselectedPatElectrons+process.selectedPatElectrons+process.selectedPatMuons+process.cleanPatJets)
-  process.analysisSequence = cms.Sequence(process.analysisSequence*process.selectedObjectsForSyst)
+
+  process.goodJets = process.cleanJets.clone(
+   preselection = cms.string("abs(eta)<2.4 && pt>25 && userFloat('idLoose')>0")
+  )
+
+  process.fwdJets = process.cleanJets.clone(
+   preselection = cms.string("abs(eta)>=2.4 && abs(eta)<5.0 && pt>25 && userFloat('idLoose')>0")
+  )
+
+  process.selectedObjectsForSyst = cms.Sequence(
+     process.allMuons 
+   + process.goodMuons
+   + process.vetoMuons 
+   + process.qcdMuons 
+   + process.allElectrons
+   + process.goodElectrons 
+   + process.vetoElectrons 
+   + process.qcdElectrons 
+   + process.allJets
+   + process.cleanJets
+   + process.goodJets
+   + process.fwdJets
+) 
+  #process.selectedObjectsForSyst = cms.Sequence(process.preselectedPatMuons+process.selectedPatMuons+process.preselectedPatElectrons+process.selectedPatElectrons+process.cleanPatJets + process.goodMuons + process.goodElectrons + process.vetoMuons + process.vetoElectrons + process.qcdMuons + process.qcdElectrons + process.allMuons + process.allElectrons) 
+  process.selectedObjPath = cms.Path(process.selectedObjectsForSyst)
+#  process.preselectedPatElectrons = cms.EDFilter("PATElectronSelector",
+#   src = cms.InputTag( electrons ),
+#   cut = cms.string('pt>10 && abs(eta)<2.4 &&'
+#     '(('
+#      'abs(superCluster.eta) < 1.442 &'
+#      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.007 &'
+#      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.15 &'
+#      'sigmaIetaIeta < 0.01 &'
+#      'hadronicOverEm < 0.12'
+#     ')|('
+#      'abs(superCluster.eta) > 1.566 & abs(superCluster.eta) < 2.5 &'
+#      'abs(deltaEtaSuperClusterTrackAtVtx) < 0.009 &'
+#      'abs(deltaPhiSuperClusterTrackAtVtx) < 0.10 &'
+#      'sigmaIetaIeta < 0.03 &'
+#      'hadronicOverEm < 0.10'
+#     ')) &'
+#     'abs(dB) < 0.02 &'
+#     'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &'
+#     '(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et < 0.15 &'
+#     'passConversionVeto &'
+#     'gsfTrack.trackerExpectedHitsInner.numberOfHits <= 1 &'
+#     'triggerObjectMatches.size >= 0'
+#   ), # 
+#   filter = cms.bool(False)
+#   )
+#
+#  process.preselectedPatMuons = cms.EDFilter("PATMuonSelector",
+#   src = cms.InputTag(muons),
+#   cut = cms.string('pt>10 && abs(eta)<2.4 && userFloat("looseID")>0 && (pfIsolationR04().sumChargedHadronPt + max((pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - 0.5*pfIsolationR04().sumPUPt),0.0))/pt<0.2'), # LooseID, Loose Iso for Muon Veto
+#   filter = cms.bool(False)
+#   )
+#
+#  process.selectedPatElectrons = cms.EDFilter("PATElectronSelector",
+#   src = cms.InputTag( electrons ),
+#   cut = cms.string(
+#           'pt > 30 & abs(eta) < 2.4 &'
+#           '(('
+#           'abs(superCluster.eta) < 1.442 &'
+#           'abs(deltaEtaSuperClusterTrackAtVtx) < 0.004 &'
+#           'abs(deltaPhiSuperClusterTrackAtVtx) < 0.03 &'
+#           'sigmaIetaIeta < 0.01 &'
+#           'hadronicOverEm < 0.12'
+#          ')|('
+#           'abs(superCluster.eta) > 1.566 & abs(superCluster.eta) < 2.5 &'
+#           'abs(deltaEtaSuperClusterTrackAtVtx) < 0.005 &'
+#           'abs(deltaPhiSuperClusterTrackAtVtx) < 0.02 &'
+#           'sigmaIetaIeta < 0.03 &'
+#           'hadronicOverEm < 0.10'
+#          ')) &'
+#          'abs(dB) < 0.02 &'
+#          'abs(1./ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.05 &'
+#          '(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et < 0.10 &'
+#          'passConversionVeto &'
+#          'gsfTrack.trackerExpectedHitsInner.numberOfHits < 1'
+#   ),
+#   #cut = cms.string('pt>10 && userFloat("wp95")>0&&(userIso(0)+max(photonIso+neutralHadronIso()-0.5*userIso(2),0.0))/pt()<0.15'),
+#   filter = cms.bool(False)
+#   )
+#  process.selectedPatMuons = cms.EDFilter("PATMuonSelector",
+#   src = cms.InputTag(muons),
+#   cut = cms.string('pt>10 && userInt("tightID")==1'), # Tight ID, No Iso for GOOD, QCD
+#   filter = cms.bool(False)
+#   )
+
+  return process.selectedObjPath
+
+
+def jetReading(process,jets):
+  process.patOverloadedJets = cms.EDProducer('PATJetReader',
+   src = cms.InputTag(jets),
+  )
+  process.jetReadingSeq = cms.Sequence(process.patOverloadedJets)
+  process.jetReadingPath=cms.Path(process.jetReadingSeq)
+  return process.jetReadingPath
 
 
 def mvaMet(process):
@@ -646,6 +1087,21 @@ def genHadrons(process):
   process.createSimCollections=cms.Path(process.bhadrons*process.cbarCands*process.cCands)
 
 
+def GenBWeight(process):
+  process.GBWeightProducer=cms.EDProducer("GenBWeightProducer",
+	pprop=cms.FileInPath('UWAnalysis/RecoTools/data/bHProp.txt'),
+  	p511=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_511_decaytable.txt'),
+  	p521=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_521_decaytable.txt'),
+  	p531=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_531_decaytable.txt'),
+  	p541=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_541_decaytable.txt'),
+  	p411=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_411_decaytable.txt'),
+  	p421=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_421_decaytable.txt'),
+  	p431=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_431_decaytable.txt'),
+  	p441=cms.FileInPath('UWAnalysis/RecoTools/data/fHadron_441_decaytable.txt')
+
+  )
+  process.GetBDWeights=cms.Path(process.GBWeightProducer)
+
 def IVF(process):
   process.load("RecoBTag.SecondaryVertex.secondaryVertex_cff")
   process.load("RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff")
@@ -681,8 +1137,9 @@ def IVF(process):
   process.LCProducer.src= cms.InputTag("bCandidates")
   process.LCProducer.primaryVertices= cms.InputTag("offlinePrimaryVertices")
   process.LCProducer.jetSource= cms.InputTag("ak5PFJets")
-
+  process.LCProducer.jetGenSource= cms.InputTag("ak5GenJets")
   process.dump = cms.EDAnalyzer("EventContentAnalyzer")
+  process.LCProducer.isMC = cms.bool(False)
   process.createBCandidateCollection=cms.Path(process.IVF*process.IMV1*process.TVA*process.IMV2*process.IMVF*process.bCandidates*process.LCProducer)
 
 
@@ -884,15 +1341,29 @@ def createSystematics(process,sequence,postfix,muScale,eScale,tauScale,jetScale,
         if(hasattr(mod,'name')):
           newValue = mod.name.value()+postfix
           mod.name=cms.string(newValue)
-      if mod.label().find('smearedMuons') !=-1 :
+      if mod.label().find('smearedVetoMuons') !=-1 :
+          mod.energyScale = cms.double(muScale)
+      if mod.label().find('smearedQCDMuons') !=-1 :
+          mod.energyScale = cms.double(muScale)
+      if mod.label().find('smearedGoodMuons') !=-1 :
           mod.energyScale = cms.double(muScale)
       if mod.label().find('smearedTaus') !=-1 :
           mod.energyScale = cms.double(tauScale)
-      if mod.label().find('smearedElectrons') !=-1 :
+      if mod.label().find('smearedVetoElectrons') !=-1 :
           mod.energyScale = cms.double(eScale)
           mod.deltaPtB = cms.double(electronresb)
           mod.deltaPtE = cms.double(electronrese)
-      if mod.label().find('smearedJets') !=-1 :
+      if mod.label().find('smearedQCDElectrons') !=-1 :
+          mod.energyScale = cms.double(eScale)
+          mod.deltaPtB = cms.double(electronresb)
+          mod.deltaPtE = cms.double(electronrese)
+      if mod.label().find('smearedGoodElectrons') !=-1 :
+          mod.energyScale = cms.double(eScale)
+          mod.deltaPtB = cms.double(electronresb)
+          mod.deltaPtE = cms.double(electronrese)
+      if mod.label().find('smearedGoodJets') !=-1 :
+          mod.energyScaleDB = cms.double(jetScale) ##changed from int32 to double
+      if mod.label().find('smearedFwdJets') !=-1 :
           mod.energyScaleDB = cms.double(jetScale) ##changed from int32 to double
       if mod.label().find('smearedMET') !=-1 :
           mod.unclusteredScale= cms.double(unclusteredScale)

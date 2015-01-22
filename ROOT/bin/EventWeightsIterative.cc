@@ -135,7 +135,7 @@ void readdir(TDirectory *dir,optutl::CommandLineParser parser,float ev,int doPU,
   //to run faster, take out this line when doing systematics
 //  if(string == "muNuEventTreeMuonUp")  return;
 
-  if(string == "summary")  return;
+//  if(string == "summary")  return;
 
   TObject *obj = key->ReadObj();
   // if in a directory, recursively call function

@@ -58,10 +58,12 @@ void PATMuonRochesterCorrector::produce( edm::Event& evt, const edm::EventSetup&
     {
         pat::Muon original_muon = muons->at(i);
         pat::Muon corrected_muon = original_muon;
+        //std::cout<<original_muon.pt()<<std::endl;
 
         FourVec corr_p4 = *original_muon.userData<FourVec>( _tag );
 
         corrected_muon.setP4( corr_p4 );
+        //std::cout<<corrected_muon.pt()<<std::endl;
 
         out->push_back( corrected_muon );
     }

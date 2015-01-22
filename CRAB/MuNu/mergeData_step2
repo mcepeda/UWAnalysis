@@ -1,16 +1,29 @@
 #!/bin/sh
-# Author: T.M.Perry UW-Madison
-# Merges Data files from /hdfs/... to working directory
 
-version="v5"
-cd $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/data/
-#mkdir ${version}
-cd ${version}
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_DataA-mergeFilesJob \
+   mergedFinal_${version}_DataA \
+   $CMSSW_BASE
 
-hadd wMuNuData_1_5.root \
- /hdfs/store/user/$USER/merged_${version}_DATA1-mergeFilesJob/*.root \
- /hdfs/store/user/$USER/merged_${version}_DATA2-mergeFilesJob/*.root \
- /hdfs/store/user/$USER/merged_${version}_DATA3-mergeFilesJob/*.root \
- /hdfs/store/user/$USER/merged_${version}_DATA4-mergeFilesJob/*.root \
- /hdfs/store/user/$USER/merged_${version}_DATA5-mergeFilesJob/*.root #\
-# /hdfs/store/user/$USER/merged_${version}_DATA6-mergeFilesJob/*.root 
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_DataB-mergeFilesJob \
+   mergedFinal_${version}_DataB \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_DataC-mergeFilesJob \
+   mergedFinal_${version}_DataC \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/merged_${version}_DataD-mergeFilesJob \
+   mergedFinal_${version}_DataD \
+   $CMSSW_BASE

@@ -13,7 +13,7 @@ public:
   BCandFinalState(){}
 
   //set info
-
+  void nBC(int val)                 {nBC_=val;}
   void BC1PT(float val)             {BC1PT_=val;}
   void BC2PT(float val)             {BC2PT_=val;}
   void BC1ETA(float val)            {BC1ETA_=val;}
@@ -21,10 +21,12 @@ public:
   void BC1PHI(float val)            {BC1PHI_=val;}
   void BC2PHI(float val)            {BC2PHI_=val;}
   void BC1nTracks(int val)          {BC1nTracks_=val;}
-  void BC2nTracks(int val)          {BC1nTracks_=val;}
+  void BC2nTracks(int val)          {BC2nTracks_=val;}
   void BCEnergySum(float val)       {BCEnergySum_=val;}
+  void BCGenEnergySum(float val)       {BCGenEnergySum_=val;}
   void nJetAssociatedToBC1(int val) {nJetAssociatedToBC1_=val;}
   void nJetAssociatedToBC2(int val) {nJetAssociatedToBC2_=val;}
+  void nJetAssociatedToBC(int val) {nJetAssociatedToBC_=val;}
   void Jet1BC1PT(float val)         {Jet1BC1PT_=val;}
   void Jet2BC1PT(float val)         {Jet2BC1PT_=val;}
   void Jet3BC1PT(float val)         {Jet3BC1PT_=val;}
@@ -56,7 +58,7 @@ public:
 
 
   //get info
-
+   int nBC()		     const {return nBC_;}	
    float BC1PT()             const {return BC1PT_;}
    float BC2PT()             const {return BC2PT_;}
    float BC1ETA()            const {return BC1ETA_;}
@@ -66,8 +68,10 @@ public:
    int BC1nTracks()          const {return BC1nTracks_;}
    int BC2nTracks()          const {return BC2nTracks_;}
    float BCEnergySum()       const {return BCEnergySum_;}
+   float BCGenEnergySum()       const {return BCGenEnergySum_;}
    int nJetAssociatedToBC1() const {return nJetAssociatedToBC1_;}
    int nJetAssociatedToBC2() const {return nJetAssociatedToBC2_;}
+   int nJetAssociatedToBC() const {return nJetAssociatedToBC_;}
    float Jet1BC1PT()         const {return Jet1BC1PT_;}
    float Jet2BC1PT()         const {return Jet2BC1PT_;}
    float Jet3BC1PT()         const {return Jet3BC1PT_;}
@@ -98,6 +102,7 @@ public:
    float BC2MASS()         const {return BC2MASS_;}
 
 private:
+   int nBC_;
    float BC1PT_;
    float BC2PT_;
    float BC1ETA_;
@@ -107,8 +112,10 @@ private:
    int BC1nTracks_;
    int BC2nTracks_;	
    float BCEnergySum_;
+   float BCGenEnergySum_;
    int nJetAssociatedToBC1_;
    int nJetAssociatedToBC2_;
+   int nJetAssociatedToBC_;
    float Jet1BC1PT_;
    float Jet2BC1PT_;
    float Jet3BC1PT_;

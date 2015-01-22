@@ -23,6 +23,6 @@
   <use   name="UWAnalysis/DataFormats"/>
   <use   name="CommonTools/UtilAlgos"/>
   <use   name="root"/>
-<use name="CommonTools/Utils"/>
-<use name="rootrflx"/>
+  <use   name="CommonTools/Utils"/>
+  <use   name="rootrflx"/>
 </library>

@@ -6,80 +6,93 @@ Author: T.M.Perry UW
 import ROOT
 from ROOT import THStack,TH1F,TFile
 from ROOT import TLegend,TCanvas,TPad,TLatex,TLine
-from ROOT import gROOT,gStyle
+from ROOT import gROOT,gStyle,Double
 
 import aHisto as h #function to make histograms
 import histoRange as hr #manages range, lables for plots
 
-data_filename = '../data/post_synch_v0/WJets.root' 
-#data_filename = '../data/post_synch_v0/Data_B.root' 
+file1_filename = '../data/post_synch_v6/Wbb4F.root' 
 
 cut_type = 'wbb'
-path = '../scripts/synch/WJets_norm_%s'%(cut_type)
-#path = '../scripts/synch/Data_norm_%s'%(cut_type)
-
-data_file  = TFile( data_filename)
-eventTreeLocation = 'muNuEventTree/eventTree'
-data_tree  =  data_file.Get(eventTreeLocation) 
+path = '../plots/21aout_W4F_%s'%(cut_type)
 
 out_file = gROOT.FindObject("%s.root"%(path))
 if out_file: out_file.Close()
 out_file = TFile("%s.root"%(path),"RECREATE","synching")
+ 
+file1_file  = TFile( file1_filename)
 
+eventTreeLocations = [
+'muNuEventTree/eventTree',
+#'muNuEventTreeMuonUp/eventTree',
+#'muNuEventTreeMuonDown/eventTree',
+#'muNuEventTreeJetUp/eventTree',
+#'muNuEventTreeJetDown/eventTree',
+#'muNuEventTreeUCEUp/eventTree',
+#'muNuEventTreeUCEDown/eventTree'
+]
+eventTreeLocation='muNuEventTree/eventTree'
+
+ 
 leafs = [
-'J1_pt',
-'J2_pt',
-'muon_pt',
-'met_pt',
+#'J1_pt',
+#'J2_pt',
+#'muon_pt',
+#'met_pt',
 'mt'
 ]
 
-cut = '(2>1)'
-j1btag = '(J1_CSVbtag > 0.898)'
-j2btag = '(J2_CSVbtag > 0.898)'
-j3btag = '(J3_CSVbtag > 0.898)'
-twoBTags = '('+j1btag+'&&'+j2btag+')'
-twoOfThreeBTags = '(('+j1btag+'&&'+j2btag+')||('+j1btag+'&&'+j3btag+')||('+j2btag+'&&'+j3btag+'))'
+ps = 'No'
 
-if cut_type is 'wbb':
- cut='(((J1_idLooseJet)&&(J2_idLooseJet))&&(muNuRelPFIsoDB_A<0.12)&&(((((HLT_IsoMu24_eta2p1_v_fired)&&(nrEle==0 && nrMu==1 && abs(muon_eta)<2.1 && muon_pt>30)&&(nJets24Pt25==0))&&(2>1))&&((J1_CSVbtag>0.898)&&(J2_CSVbtag>0.898)))&&((J1_pt >25 && J2_pt>25 && abs(J1_eta)<2.4 && abs(J2_eta)<2.4)&& J3_pt<25)) && mt>45)'
-
-if cut_type is 'tt_me':
- cut='((J1_idLooseJet)&&(J2_idLooseJet)&&(muNuRelPFIsoDB_A<0.12)&&(HLT_IsoMu24_eta2p1_v_fired)&&(nrEle==1 && nrMu==1 && abs(muon_eta)<2.1 && muon_pt>30)&&(mt>45)&&(J1_pt>25 && J2_pt>25 && abs(J1_eta)<2.4 && abs(J2_eta)<2.4 && J3_pt<25) && '+twoBTags+')'
-
-if cut_type is 'tt_m':
- cut='((J1_idLooseJet)&&(J2_idLooseJet)&&(J3_idLooseJet)&&(muNuRelPFIsoDB_A<0.12)&&(HLT_IsoMu24_eta2p1_v_fired)&&(nrEle==0 && nrMu==1 && abs(muon_eta)<2.1 && muon_pt>30)&&(mt>45)&&(J1_pt >25 && J2_pt>25 && abs(J1_eta)<2.4 && abs(J2_eta)<2.4 && J3_pt>25 && abs(J3_eta)<2.4 && abs(J4_eta)<2.4) && '+twoOfThreeBTags+')'
+cut='(((weightFactor * 19775 * weightEtaMuonID * weightEtaMuonIso * weightEtaMuonTrig) * ((((abs(J1_partonFlavour)==5 || abs(J1_partonFlavour)==4) * J1_CSVT_SFb)+(!(abs(J1_partonFlavour)==5 || abs(J1_partonFlavour)==4) * J1_CSVT_SFl)) * (((abs(J2_partonFlavour)==5 || abs(J2_partonFlavour)==4) * J2_CSVM_SFb)+(!(abs(J2_partonFlavour)==5 || abs(J2_partonFlavour)==4) * J2_CSVM_SFl)))) * ((muNuRelPFIsoDB_A<0.12 && HLT_IsoMu24_eta2p1_v_fired) && ((abs(muon_eta)<2.1 && muon_pt>30) && (nrMuLoose==1 && nrEle==0) && (J1_pt>25 && abs(J1_eta)<2.4 && J1_idLooseJet) && (J2_pt>25 && abs(J2_eta)<2.4 && J2_idLooseJet) && (J3_pt<25) && (nJets24Pt25==0) && (J1_CSVbtag>0.898) && (J2_CSVbtag>0.898) )))'
+ #cut='(((weightFactor * 19775 * weightEtaMuonID * weightEtaMuonIso * weightEtaMuonTrig) * ((((abs(J1_partonFlavour)==5 || abs(J1_partonFlavour)==4) * J1_CSVT_SFb)+(!(abs(J1_partonFlavour)==5 || abs(J1_partonFlavour)==4) * J1_CSVT_SFl)) * (((abs(J2_partonFlavour)==5 || abs(J2_partonFlavour)==4) * J2_CSVM_SFb)+(!(abs(J2_partonFlavour)==5 || abs(J2_partonFlavour)==4) * J2_CSVM_SFl)))) * ((muNuRelPFIsoDB_A<0.12 && HLT_IsoMu24_eta2p1_v_fired) && ((abs(muon_eta)<2.1 && muon_pt>30) && (nrMuLoose==1 && nrEle==0) && (J1_pt>25 && abs(J1_eta)<2.4 && J1_idLooseJet) && (J2_pt>25 && abs(J2_eta)<2.4 && J2_idLooseJet) && (J3_pt<25) && (nJets24Pt25==0) && (J1_CSVbtag>0.898) && (J2_CSVbtag>0.898) && (mt>45))))'
 
 I = -1
 F = -1
 can = TCanvas('can','can',800,800)
+#for eventTreeLocation in eventTreeLocations:
+# print(eventTreeLocation)
+# if eventTreeLocation == 'muNuEventTree/eventTree' : ps = 'No'
+# if eventTreeLocation == 'muNuEventTreeMuonUp/eventTree' : ps ='muonUp'
+# if eventTreeLocation == 'muNuEventTreeMuonDown/eventTree' : ps ='muonDown'
+# if eventTreeLocation == 'muNuEventTreeJetUp/eventTree' : ps ='jetUp'
+# if eventTreeLocation == 'muNuEventTreeJetDown/eventTree' : ps ='jetDown'
+# if eventTreeLocation == 'muNuEventTreeUCEUp/eventTree': ps = 'UCEUp'
+# if eventTreeLocation == 'muNuEventTreeUCEDown/eventTree': ps = 'UCEDown'
+file1_tree  =  file1_file.Get(eventTreeLocation) 
 for leaf in leafs:
  steps, xmin, xmax, xtitle, xunits, setLogY = hr.ranger(leaf)
 
- hnwr,hnwrSize,hnwrSizePart,hnwrEvents = h.gram(data_tree,leaf,xmin,xmax,steps,cut,I,F)
+ hnwr,hnwrSize,hnwrSizePart,hnwrEvents = h.gram(file1_tree,leaf,xmin,xmax,steps,cut,I,F)
  hnwr.SetName("hnwr")
- hnwr.Scale(1./hnwr.Integral())
+ #hnwr.Scale(1./hnwr.Integral())
  nwrMax = hnwr.GetMaximum()
  hnwr.SetLineColor(ROOT.EColor.kGreen+3)
  hnwr.SetLineWidth(3)
 
- leg=TLegend(0.5,0.5,0.9,0.7)
- leg.SetFillColor(0)
- leg.SetBorderSize(0)
- leg.AddEntry(hnwr,'Tom 2012B')
+# leg=TLegend(0.5,0.5,0.9,0.7)
+# leg.SetFillColor(0)
+# leg.SetBorderSize(0)
+# leg.AddEntry(hnwr,'Tom 2012B')
 
  can.cd()
  #hnwr.SetMaximum(0.07)
  hnwr.SetTitle(leaf)
  hnwr.Draw('hist')
- leg.Draw('sames')
+ #leg.Draw('sames')
  gStyle.SetOptStat(1122)
 
- can.Update()
- print('you just read '+leaf)
+ #can.Update()
+ #err = Double(0.)
+ #print('you just read '+leaf)
+ #print('Nr. Events:  %s'%(hnwr.Integral()))
+ #print('Nr. Events:  %s'%(hnwr.IntegralAndError(-10,1000,err)))
+ #print('Error: %s'%(err))
+ #print('Nr. Entries: %s'%(hnwr.GetEntries()))
 # save = raw_input ('Press Enter to Continue (type save to save)\n')
 # if save == 'save':
- can.Print(path+'_'+leaf+'.png') 
- hnwr.SetName(leaf)
- out_file.Write()
- hnwr.Delete()
+ can.Print(path+'_'+leaf+'_'+ps+'.png') 
+ #hnwr.SetName(leaf)
+ #hnwr.SetName(leaf+ps)
+ #hnwr.Delete()
+out_file.Write()

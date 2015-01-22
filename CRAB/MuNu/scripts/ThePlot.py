@@ -12,46 +12,40 @@ import cmsPrelim as cpr
 import TheParameters as p
  
 # scale factors : sf_qcd = 1 + (data-allMC)/qcd in 0<mt<20
-#sf_qcd = 1.
-#sf_qcd = 1.19040846759 # Signal
-#sf_qcd = 2.2196499517 #TT_m
-#sf_qcd = 1.66907158262 #TT_me
-#sf_qcd =  0.716463222704 #ST
 
-#sf_qcd = 0.0342524013772 #signal
-sf_qcd = 0.0598271961327 #TT_m
+# Halloween
+#sf_qcd = 0.00000000001
+#sf_qcd = 0.0025316635942 # Wbb
+sf_qcd = 0.00302154299378 # TT_3j
+#sf_qcd = 1. # TT_1m1e
+#sf_qcd = 0.0519607675029 # ST
+#sf_qcd = 0.0253012710684 # WJets
+#sf_qcd = 0.277049853807 # WJets + QCDwTRG
 
-#sf_qcd = 1.20199004669 # signal
+sf_Top_Wbb          = 1. #1.9553517118    / 1.57266658081
+sf_Top_TTbar        = 1. #240.6/245.8 #1. #1366.90108757   / 1225.41492591
+sf_Top_tW           = 1. #33.7173900878   / 34.2463617338
+sf_Top_Tbar         = 1. #0.663758928599  / 0.6598701129
+sf_Top_T            = 1. #0.957306964662  / 0.950968565694
+sf_Top_QCD = sf_qcd * 1.#0.0724173672497 / 0.102551698685
 
-sf_Signal_Wbb    = 1. 
-sf_Signal_Tbar   = 1. 
-sf_Signal_tW     = 1. 
-sf_Signal_TOP    = 1. 
-sf_Signal_Z_jets = 1. 
-sf_Signal_Wcc    = 1. 
-sf_Signal_T      = 1. 
-sf_Signal_WZ     = 1. 
-
-sf_Top_T         = 1.#  (2.26033000000000000e+05)/2497226 
-sf_Top_TOP       = 1. 
-sf_Top_tW        = 1. 
-sf_Top_Wbb       = 1. 
-sf_Top_Tbar      = 1. 
-
-#sf_Signal_Wbb    = 1.66149845584
-#sf_Signal_Tbar   = 0.917947900053
-#sf_Signal_tW     = 0.944239130435
-#sf_Signal_TOP    = 0.961875235346
-#sf_Signal_T      = 0.865918051797
-#sf_Signal_Z_jets = 0.929749478079
-#sf_Signal_Wcc    = 0.985777777778
-#sf_Signal_WZ     = 0.917359437751
+sf_Signal_QCD = sf_qcd * 1. #(276.682527912 / 391.815720025) * sf_qcd
+sf_Signal_Drell        = 1. #110.595743425 / 100.460683177
+sf_Signal_VV           = 1. #115.84464714  / 114.132847588
+sf_Signal_T            = 1. #415.707530564 / 389.801262543
+sf_Signal_Tbar         = 1. #241.137591009 / 222.805572482
+sf_Signal_tW           = 1. #89.1214765299 / 86.8481257456
+sf_Signal_TTbar        = 1. #2738.7690035  / 2302.46459317
+sf_Signal_Wl           = 1. #52.9669448168 / 74.6321442293
+sf_Signal_Wcc          = 1. #130.726683911 / 144.534251764
+sf_Signal_Wbb          = 1. #1160.15559794 / 946.523539255  
 #
-#sf_Top_T         = 0.931276309897
-#sf_Top_TOP       = 1.04533223802
-#sf_Top_tW        = 1.03434405309
-#sf_Top_Wbb       = 1.69424487594
-#sf_Top_Tbar      = 0.984493670886
+#sf_Top_Wbb       = 1.9553517118    / 1.57266658081
+#sf_Top_TTbar     = 1366.90108757   / 1225.41492591
+#sf_Top_tW        = 33.7173900878   / 34.2463617338
+#sf_Top_Tbar      = 0.663758928599  / 0.6598701129
+#sf_Top_T         = 0.957306964662  / 0.950968565694
+#sf_Top_QCD       = 0.0724173672497 / 0.102551698685
 
 ratioRange = 0.3
 rebin = 1
@@ -102,31 +96,34 @@ gStyle.SetOptStat('')
 # get parameters to run on
 lumi,bNr,btype,jNr,njetcut,jetcut,I,F,iso_value,antiIso_value,path,extraName,leafs,drawW,drawZ,drawQCD,drawData,jetVeto,Control,Z_Region,Legacy,noMT,TT_m,TT_me,ST,Signal,Tomislav,eventTreeLocation,extraCut,Ctl_Andrea = p.arams() 
 
-sf_Wbb    = 1. 
+sf_QCD    = sf_qcd 
+sf_Drell  = 1. 
+sf_VV     = 1. 
+sf_T      = 1. 
 sf_Tbar   = 1. 
 sf_tW     = 1. 
-sf_TOP    = 1. 
-sf_Z_jets = 1. 
+sf_TTbar  = 1. 
+sf_Wl     = 1. 
 sf_Wcc    = 1. 
-sf_T      = 1. 
-sf_WZ     = 1. 
-sf_wl     = 1.
-sf_wc     = 1.
-#if Signal:
-# sf_Wbb    = sf_Signal_Wbb   
-# sf_Tbar   = sf_Signal_Tbar  
-# sf_tW     = sf_Signal_tW    
-# sf_TOP    = sf_Signal_TOP   
-# sf_Z_jets = sf_Signal_Z_jets
-# sf_Wcc    = sf_Signal_Wcc   
-# sf_T      = sf_Signal_T     
-# sf_WZ     = sf_Signal_WZ    
-#if TT_m or TT_me:
-# sf_Wbb    = sf_Top_Wbb  
-# sf_Tbar   = sf_Top_Tbar 
-# sf_tW     = sf_Top_tW   
-# sf_TOP    = sf_Top_TOP  
-# sf_T      = sf_Top_T    
+sf_Wbb    = 1. 
+if Signal:
+ sf_QCD    = sf_Signal_QCD
+ sf_Drell  = sf_Signal_Drell
+ sf_VV     = sf_Signal_VV    
+ sf_T      = sf_Signal_T     
+ sf_Tbar   = sf_Signal_Tbar  
+ sf_tW     = sf_Signal_tW    
+ sf_TTbar  = sf_Signal_TTbar 
+ sf_Wl     = sf_Signal_Wl
+ sf_Wcc    = sf_Signal_Wcc   
+ sf_Wbb    = sf_Signal_Wbb   
+if TT_m or TT_me:
+ sf_QCD    = sf_Top_QCD
+ sf_Wbb    = sf_Top_Wbb  
+ sf_Tbar   = sf_Top_Tbar 
+ sf_tW     = sf_Top_tW   
+ sf_TTbar  = sf_Top_TTbar
+ sf_T      = sf_Top_T
 
 for leaf in leafs:
 
@@ -146,19 +143,20 @@ for leaf in leafs:
 
   log = open(path+i+'.log','a')
   log.write('\n\nOn Plotting SF QCD: '+str(sf_qcd)+'\n') 
-  log.write('On Plotting SF Drell: '+str(sf_Z_jets)+'\n')
+  log.write('On Plotting SF Drell: '+str(sf_Drell)+'\n')
   log.write('On Plotting SF Top: '+str(sf_T)+'\n')
   log.write('On Plotting SF tBar: '+str(sf_Tbar)+'\n')
   log.write('On Plotting SF tW: '+str(sf_tW)+'\n')
-  log.write('On Plotting SF TTbar: '+str(sf_TOP)+'\n')
+  log.write('On Plotting SF TTbar: '+str(sf_TTbar)+'\n')
   log.write('On Plotting SF Wbb: '+str(sf_Wbb)+'\n')
   log.write('On Plotting SF Wcc: '+str(sf_Wcc)+'\n')
-  log.write('On Plotting SF Diboson: '+str(sf_WZ)+'\n')
+  log.write('On Plotting SF Diboson: '+str(sf_VV)+'\n')
   log.write('----------------------------------------\n')
   log.write('----------------------------------------\n')
   log.close()
 
   c = TCanvas('c','Canvas Named c',canx,cany)
+  c.cd()
   p1 = TPad('p1','p1',0,0.3,1,1)
   p1.SetBottomMargin(0.08)
   p1.Draw()
@@ -178,31 +176,31 @@ for leaf in leafs:
    qh = theFile.Get('qh')
    qh.SetFillColor(q)
    qh.Rebin(rebin)
-   qh.Scale(sf_qcd)
+   qh.Scale(sf_QCD)
    qh.Draw()
  #### Drell
   zih = theFile.Get('zih')
   zih.SetFillColor(z)
   zih.Rebin(rebin)
-  zih.Scale(sf_Z_jets)
+  zih.Scale(sf_Drell)
   zih.Draw()
  #### Diboson
   wwih = theFile.Get('wwih')
   wwih.SetFillColor(d)
   wwih.Rebin(rebin)
-  wwih.Scale(sf_WZ)
+  wwih.Scale(sf_VV)
   wwih.Draw()
   ###
   wzih = theFile.Get('wzih')
   wzih.SetFillColor(d)
   wzih.Rebin(rebin)
-  wzih.Scale(sf_WZ)
+  wzih.Scale(sf_VV)
   wzih.Draw()
   ###
   zzih = theFile.Get('zzih')
   zzih.SetFillColor(d)
   zzih.Rebin(rebin)
-  zzih.Scale(sf_WZ)
+  zzih.Scale(sf_VV)
   zzih.Draw()
   ####
   dih = wwih.Clone()
@@ -221,7 +219,7 @@ for leaf in leafs:
   tb_sih = theFile.Get('tb_sih')
   tb_sih.SetFillColor(ts)
   tb_sih.Rebin(rebin)
-  tb_sih.Scale(sf_T)
+  tb_sih.Scale(sf_Tbar)
   tb_sih.Draw()
   #### 
   stsih = t_sih.Clone()
@@ -239,7 +237,7 @@ for leaf in leafs:
   tb_tih = theFile.Get('tb_tih')
   tb_tih.SetFillColor(tt)
   tb_tih.Rebin(rebin)
-  tb_tih.Scale(sf_T)
+  tb_tih.Scale(sf_Tbar)
   tb_tih.Draw()
   #### 
   sttih = t_tih.Clone()
@@ -268,13 +266,13 @@ for leaf in leafs:
   tt_semiih = theFile.Get('tt_semiih')
   tt_semiih.SetFillColor(ttb)
   tt_semiih.Rebin(rebin)
-  tt_semiih.Scale(sf_TOP)
+  tt_semiih.Scale(sf_TTbar)
   tt_semiih.Draw()
   ###
   tt_fullih = theFile.Get('tt_fullih')
   tt_fullih.SetFillColor(ttb)
   tt_fullih.Rebin(rebin)
-  tt_fullih.Scale(sf_TOP)
+  tt_fullih.Scale(sf_TTbar)
   tt_fullih.Draw()
   ###
   ttbih = tt_semiih.Clone()
@@ -318,7 +316,7 @@ for leaf in leafs:
   wlih.Add(wl2ih)
   wlih.Add(wl3ih)
   wlih.Add(wl4ih)
-  wlih.Scale(sf_wl)
+  wlih.Scale(sf_Wl)
   wlih.Draw()
   print(wlih.Integral(bmin,bmax))
  #### W + Charm
@@ -354,7 +352,7 @@ for leaf in leafs:
   wcih.Add(wc2ih)
   wcih.Add(wc3ih)
   wcih.Add(wc4ih)
-  wcih.Scale(sf_wc)
+  wcih.Scale(sf_Wl)
   wcih.Draw()
   print(wcih.Integral(bmin,bmax))
  #### W + Charming

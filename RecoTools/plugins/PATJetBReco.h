@@ -58,7 +58,7 @@ class PATJetBReco : public edm::EDProducer {
 
   explicit PATJetBReco(const edm::ParameterSet& iConfig):
     src_(iConfig.getParameter<edm::InputTag>("src")),
-    leptons_(iConfig.getParameter<edm::InputTag>("leptons")),
+    //leptons_(iConfig.getParameter<edm::InputTag>("leptons")),
     vertex_(iConfig.getParameter<edm::InputTag>("vertices"))
   {
     produces<pat::JetCollection>();
@@ -73,7 +73,7 @@ class PATJetBReco : public edm::EDProducer {
     using namespace reco;
     std::auto_ptr<pat::JetCollection> jets(new pat::JetCollection);
     Handle<pat::JetCollection > cands;
-    Handle<pat::MuonCollection > leptons; ///adding muons! :D
+    //Handle<pat::MuonCollection > leptons; ///adding muons! :D
     Handle<reco::VertexCollection> vertices;
     bool verticesExist = iEvent.getByLabel(vertex_,vertices);
 
@@ -86,6 +86,12 @@ class PATJetBReco : public edm::EDProducer {
     if(iEvent.getByLabel(src_,cands)) 
       for(unsigned int  l=0;l!=cands->size();++l){
 	pat::Jet jet = cands->at(l);
+
+//   std::cout<<"PATJetBReco"<<
+//                " Jet pT: "<<jet.pt()<<
+//                " eta: "<<jet.eta()<<
+//                " phi: "<<jet.phi()<<std::endl;
+
 	reco::PFCandidatePtr pfcand;
 	std::vector<reco::PFCandidatePtr> chargedParticles;
 	std::vector<reco::PFCandidatePtr> chargedParticlesNoD0;
@@ -309,7 +315,7 @@ class PATJetBReco : public edm::EDProducer {
   
   // ----------member data ---------------------------
   edm::InputTag src_;
-  edm::InputTag leptons_;
+  //edm::InputTag leptons_;
   edm::InputTag vertex_;
     
 };

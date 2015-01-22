@@ -95,8 +95,13 @@ class CompositePtrCandidateTMEtProducer : public edm::EDProducer
     evt.getByLabel(srcJets_,jetCollection);
 
     JetPtrVector pfJets;
-    for(unsigned int i=0;i<jetCollection->size();++i)
+    for(unsigned int i=0;i<jetCollection->size();++i){
+      //std::cout<<"CompositePtrCandidateTMEtProducer "<<
+      // " pt: "<<jetCollection->ptrAt(i)->pt()<<
+      // " eta: "<<jetCollection->ptrAt(i)->eta()<<
+      // " phi: "<<jetCollection->ptrAt(i)->phi()<<std::endl;
       pfJets.push_back(jetCollection->ptrAt(i));
+    }
 
 
     const reco::GenParticleCollection* genParticles = 0;

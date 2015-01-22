@@ -1,4 +1,3 @@
-// system include files
 #include <memory>
 
 // user include files
@@ -9,9 +8,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
-
 // Stuff for gen level ID (based on a W analysis...)
-
 
 class GenDecayModes : public NtupleFillerBase {
  public:
@@ -45,8 +42,6 @@ class GenDecayModes : public NtupleFillerBase {
       
 
   void fill(const edm::Event& iEvent,const edm::EventSetup& iSetup);
-
-
  protected:
   bool verbose_;
   bool saveCs_;  bool saveBs_;
@@ -56,12 +51,7 @@ class GenDecayModes : public NtupleFillerBase {
 
   bool foundDPM,foundD0, foundD0Star,foundDPMall;
   bool identifiedCDecay;
-
-
-
-
 };
-
 
 void GenDecayModes::fill(const edm::Event& iEvent,const edm::EventSetup& iSetup){
     using namespace std; 
@@ -89,14 +79,11 @@ void GenDecayModes::fill(const edm::Event& iEvent,const edm::EventSetup& iSetup)
 
                                 for(unsigned int k=0; k<genpart.numberOfDaughters(); k++){
                                         const reco::Candidate* grandau=genpart.daughter(k);
-		//			if(verbose_) cout<<"\t-->"<<grandau->pdgId()<<" ";
                                         if(grandau->pdgId()==211) pi_plus++;
                                         else if(grandau->pdgId()==-211) pi_minus++;
                                         else if(grandau->pdgId()==321) k_plus++;
                                         else if(grandau->pdgId()==-321) k_minus++;
 	                              }
-
-
                         if(verbose_&&(k_plus+k_minus+pi_minus+pi_plus)>0) cout<<endl<<"Found:  K+"<<k_plus<<" K-"<<k_minus<<" Pi+:"<<pi_plus<<" Pi-:"<<pi_minus<<endl;
 
 			if(abs(genpart.pdgId())==411&&genpart.numberOfDaughters()==3&&((k_plus==1&&pi_minus==2)||(k_minus==1&&pi_plus==2))) foundDPM=true;
@@ -122,7 +109,7 @@ void GenDecayModes::fill(const edm::Event& iEvent,const edm::EventSetup& iSetup)
 				const reco::Candidate* dau=genpart.daughter(j);
 				if(verbose_)			
 				cout<<"Dau : "<<j<<" -->"<<dau->pdgId()<<endl;
-				bool unique=true; 
+				bool unique=true;
 				while(dau->pdgId()==92){
 			//		cout<<"----> "<<dau->pdgId()<<"READING DAUGHTERS: "<<dau->numberOfDaughters()<<endl;
 					if(dau->numberOfDaughters()==1) dau=dau->daughter(0);
@@ -162,7 +149,5 @@ void GenDecayModes::fill(const edm::Event& iEvent,const edm::EventSetup& iSetup)
 }
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, GenDecayModes, "GenDecayModes");
-
-
 
 

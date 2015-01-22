@@ -48,7 +48,7 @@
 #include "DataFormats/TrackReco/interface/TrackBase.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "Math/GenVector/VectorUtil.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
+//#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "TLorentzVector.h"
 #include "DataFormats/BTauReco/interface/TaggingVariable.h"
 
@@ -61,7 +61,7 @@ class PATJetBpmReco : public edm::EDProducer {
 
   explicit PATJetBpmReco(const edm::ParameterSet& iConfig):
     src_(iConfig.getParameter<edm::InputTag>("src")),
-    leptons_(iConfig.getParameter<edm::InputTag>("leptons")),
+    //leptons_(iConfig.getParameter<edm::InputTag>("leptons")),
     vertex_(iConfig.getParameter<edm::InputTag>("vertices"))
   {
     produces<pat::JetCollection>();
@@ -76,7 +76,7 @@ class PATJetBpmReco : public edm::EDProducer {
     using namespace reco;
     std::auto_ptr<pat::JetCollection> jets(new pat::JetCollection);
     Handle<pat::JetCollection > cands;
-    Handle<pat::MuonCollection > leptons; ///adding muons! :D
+    //Handle<pat::MuonCollection > leptons; ///adding muons! :D
     Handle<reco::VertexCollection> vertices;
     bool verticesExist = iEvent.getByLabel(vertex_,vertices);
 
@@ -238,7 +238,7 @@ class PATJetBpmReco : public edm::EDProducer {
   
   // ----------member data ---------------------------
   edm::InputTag src_;
-  edm::InputTag leptons_;
+  //edm::InputTag leptons_;
   edm::InputTag vertex_;
     
 };

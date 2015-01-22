@@ -193,10 +193,6 @@ process.eventSelectionMC = cms.Path(process.Filter*process.crossSectionJet25Lept
 from UWAnalysis.Configuration.tools.ntupleToolsPTGENwbb import *
 addMCEventTree(process,'MC',src="genParticles",srcMuons="dressedLeptons",srcTaggedGenJets="btaggedGenJets")
 
-
-
-
-
 process.out = cms.OutputModule("PoolOutputModule",
      outputCommands = cms.untracked.vstring( 
          'keep *'),

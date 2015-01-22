@@ -689,6 +689,81 @@ class CutSequenceProducer(cms._ParameterTypeBase):
                    self.sequence*=counter
 
 
+    def addSmearedAll(self,allMuons,goodMuons,vetoMuons,qcdMuons,allElectrons,goodElectrons,vetoElectrons,qcdElectrons,allJets,cleanJets,goodJets,fwdJets,mpost=''):
+
+          pyModule = sys.modules[self.pyModuleName[0]]
+          if pyModule is None:
+              raise ValueError("'pyModuleName' Parameter invalid")
+
+          smearedAllMuons = cms.EDProducer("SmearedMuonProducer",
+                                        src = cms.InputTag(allMuons),
+                                        smearMCParticle = cms.bool(False),
+                                        module_label = cms.string("CRAP"),
+                                        energyScale  = cms.double(1.0),
+                                        deltaEta     = cms.double(0.0),
+                                        deltaPhi     = cms.double(0.0),
+                                        deltaPtB     = cms.double(0.0),
+                                        deltaPtE     = cms.double(0.0)
+                                        )
+          smearedGoodMuons = smearedAllMuons.clone(src = cms.InputTag(goodMuons))
+          smearedVetoMuons = smearedAllMuons.clone(src = cms.InputTag(vetoMuons))
+          smearedQCDMuons  = smearedAllMuons.clone(src = cms.InputTag(qcdMuons) )
+          setattr(pyModule,'smearedAllMuons'+mpost,smearedAllMuons)
+          setattr(pyModule,'smearedGoodMuons'+mpost,smearedGoodMuons)
+          setattr(pyModule,'smearedVetoMuons'+mpost,smearedVetoMuons)
+          setattr(pyModule,'smearedQCDMuons'+mpost,smearedQCDMuons)
+          self.sequence*=smearedAllMuons
+          self.sequence*=smearedGoodMuons
+          self.sequence*=smearedVetoMuons
+          self.sequence*=smearedQCDMuons
+
+
+          smearedAllElectrons = cms.EDProducer("SmearedElectronProducer",
+                                      src = cms.InputTag(allElectrons),
+                                      smearMCParticle = cms.bool(False),
+                                      module_label = cms.string("CRAP"),
+                                      energyScale  = cms.double(1.0),
+                                      deltaEta     = cms.double(0.0),
+                                      deltaPhi     = cms.double(0.0),
+                                      deltaPtB     = cms.double(0.0),
+                                      deltaPtE     = cms.double(0.0)
+                                      )
+          smearedGoodElectrons = smearedAllElectrons.clone(src = cms.InputTag(goodElectrons))
+          smearedVetoElectrons = smearedAllElectrons.clone(src = cms.InputTag(vetoElectrons))
+          smearedQCDElectrons  = smearedAllElectrons.clone(src = cms.InputTag(qcdElectrons) )
+          setattr(pyModule,'smearedAllElectrons'+mpost,smearedAllElectrons)
+          setattr(pyModule,'smearedGoodElectrons'+mpost,smearedGoodElectrons)
+          setattr(pyModule,'smearedVetoElectrons'+mpost,smearedVetoElectrons)
+          setattr(pyModule,'smearedQCDElectrons'+mpost,smearedQCDElectrons)
+          self.sequence*=smearedAllElectrons
+          self.sequence*=smearedGoodElectrons
+          self.sequence*=smearedVetoElectrons
+          self.sequence*=smearedQCDElectrons
+
+          smearedAllJets = cms.EDProducer("SmearedJetProducer",
+                                       src = cms.InputTag(allJets),
+                                       smearMCParticle = cms.bool(False),
+                                       module_label = cms.string("CRAP"),
+                                       energyScale  = cms.double(1.0),
+                                       energyScaleDB= cms.double(0.0),
+                                       deltaEta     = cms.double(0.0),
+                                       deltaPhi     = cms.double(0.0),
+                                       deltaPtB     = cms.double(0.0),
+                                       deltaPtE     = cms.double(0.0)
+                                       )
+          smearedCleanJets = smearedAllJets.clone(src=cms.InputTag(cleanJets))
+          smearedGoodJets = smearedAllJets.clone(src=cms.InputTag(goodJets))
+          smearedFwdJets = smearedAllJets.clone(src=cms.InputTag(fwdJets))
+          setattr(pyModule,'smearedAllJets'+mpost,smearedAllJets)
+          setattr(pyModule,'smearedCleanJets'+mpost,smearedCleanJets)
+          setattr(pyModule,'smearedGoodJets'+mpost,smearedGoodJets)
+          setattr(pyModule,'smearedFwdJets'+mpost,smearedFwdJets)
+          self.sequence*=smearedAllJets
+          self.sequence*=smearedCleanJets
+          self.sequence*=smearedGoodJets
+          self.sequence*=smearedFwdJets
+
+
     def addSmearing(self,taus,muons,electrons,jets,mets,mpost=''):
           smearedTaus = cms.EDProducer("SmearedTauProducer",
                                        src = cms.InputTag(taus),
@@ -711,26 +786,26 @@ class CutSequenceProducer(cms._ParameterTypeBase):
           #self.sequence*=smearedTaus
 
 
-          #add a post MET tau
-          smearedTausID = cms.EDProducer("SmearedTauProducer",
-                                       src = cms.InputTag('selectedPatTaus'),
-                                       smearMCParticle = cms.bool(False),
-                                       module_label = cms.string("CRAP"),
-                                       energyScale  = cms.double(1.0),
-                                       deltaEta     = cms.double(0.0),
-                                       deltaPhi     = cms.double(0.0),
-                                       deltaPtB     = cms.double(0.0),
-                                       deltaPtE     = cms.double(0.0),
-                                       smearConstituents = cms.bool(False),
-                                       hadronEnergyScale = cms.double(1.0),
-                                       gammaEnergyScale = cms.double(1.0)
-                                       )
-
-          pyModule = sys.modules[self.pyModuleName[0]]
-          if pyModule is None:
-              raise ValueError("'pyModuleName' Parameter invalid")
-          setattr(pyModule,'smearedTausID'+mpost,smearedTausID)
-          #self.sequence*=smearedTausID
+#          #add a post MET tau
+#          smearedTausID = cms.EDProducer("SmearedTauProducer",
+#                                       src = cms.InputTag('selectedPatTaus'),
+#                                       smearMCParticle = cms.bool(False),
+#                                       module_label = cms.string("CRAP"),
+#                                       energyScale  = cms.double(1.0),
+#                                       deltaEta     = cms.double(0.0),
+#                                       deltaPhi     = cms.double(0.0),
+#                                       deltaPtB     = cms.double(0.0),
+#                                       deltaPtE     = cms.double(0.0),
+#                                       smearConstituents = cms.bool(False),
+#                                       hadronEnergyScale = cms.double(1.0),
+#                                       gammaEnergyScale = cms.double(1.0)
+#                                       )
+#
+#          pyModule = sys.modules[self.pyModuleName[0]]
+#          if pyModule is None:
+#              raise ValueError("'pyModuleName' Parameter invalid")
+#          setattr(pyModule,'smearedTausID'+mpost,smearedTausID)
+#          #self.sequence*=smearedTausID
 
 
 
@@ -752,22 +827,22 @@ class CutSequenceProducer(cms._ParameterTypeBase):
           setattr(pyModule,'smearedMuons'+mpost,smearedMuons)
           self.sequence*=smearedMuons
 
-          smearedMuonsID = cms.EDProducer("SmearedMuonProducer",
-                                        src = cms.InputTag('selectedPatMuons'),
-                                        smearMCParticle = cms.bool(False),
-                                        module_label = cms.string("CRAP"),
-                                        energyScale  = cms.double(1.0),
-                                        deltaEta     = cms.double(0.0),
-                                        deltaPhi     = cms.double(0.0),
-                                        deltaPtB     = cms.double(0.0),
-                                        deltaPtE     = cms.double(0.0)
-                                        )
-
-          pyModule = sys.modules[self.pyModuleName[0]]
-          if pyModule is None:
-              raise ValueError("'pyModuleName' Parameter invalid")
-          setattr(pyModule,'smearedMuonsID'+mpost,smearedMuonsID)
-          self.sequence*=smearedMuonsID
+#          smearedMuonsID = cms.EDProducer("SmearedMuonProducer",
+#                                        src = cms.InputTag('selectedPatMuons'),
+#                                        smearMCParticle = cms.bool(False),
+#                                        module_label = cms.string("CRAP"),
+#                                        energyScale  = cms.double(1.0),
+#                                        deltaEta     = cms.double(0.0),
+#                                        deltaPhi     = cms.double(0.0),
+#                                        deltaPtB     = cms.double(0.0),
+#                                        deltaPtE     = cms.double(0.0)
+#                                        )
+#
+#          pyModule = sys.modules[self.pyModuleName[0]]
+#          if pyModule is None:
+#              raise ValueError("'pyModuleName' Parameter invalid")
+#          setattr(pyModule,'smearedMuonsID'+mpost,smearedMuonsID)
+#          self.sequence*=smearedMuonsID
 
 
           smearedElectrons = cms.EDProducer("SmearedElectronProducer",
@@ -787,22 +862,22 @@ class CutSequenceProducer(cms._ParameterTypeBase):
           setattr(pyModule,'smearedElectrons'+mpost,smearedElectrons)
           self.sequence*=smearedElectrons
 
-          smearedElectronsID = cms.EDProducer("SmearedElectronProducer",
-                                            src = cms.InputTag('selectedPatElectrons'),
-                                            smearMCParticle = cms.bool(False),
-                                            module_label = cms.string("CRAP"),
-                                            energyScale  = cms.double(1.0),
-                                            deltaEta     = cms.double(0.0),
-                                            deltaPhi     = cms.double(0.0),
-                                            deltaPtB     = cms.double(0.0),
-                                            deltaPtE     = cms.double(0.0)
-                                            )
-
-          pyModule = sys.modules[self.pyModuleName[0]]
-          if pyModule is None:
-              raise ValueError("'pyModuleName' Parameter invalid")
-          setattr(pyModule,'smearedElectronsID'+mpost,smearedElectronsID)
-          self.sequence*=smearedElectronsID
+#          smearedElectronsID = cms.EDProducer("SmearedElectronProducer",
+#                                            src = cms.InputTag('selectedPatElectrons'),
+#                                            smearMCParticle = cms.bool(False),
+#                                            module_label = cms.string("CRAP"),
+#                                            energyScale  = cms.double(1.0),
+#                                            deltaEta     = cms.double(0.0),
+#                                            deltaPhi     = cms.double(0.0),
+#                                            deltaPtB     = cms.double(0.0),
+#                                            deltaPtE     = cms.double(0.0)
+#                                            )
+#
+#          pyModule = sys.modules[self.pyModuleName[0]]
+#          if pyModule is None:
+#              raise ValueError("'pyModuleName' Parameter invalid")
+#          setattr(pyModule,'smearedElectronsID'+mpost,smearedElectronsID)
+#          self.sequence*=smearedElectronsID
 
           smearedJets = cms.EDProducer("SmearedJetProducer",
                                        src = cms.InputTag(jets),
@@ -825,14 +900,22 @@ class CutSequenceProducer(cms._ParameterTypeBase):
 
           smearedMET = cms.EDProducer('METRecalculator',
                                       met = cms.InputTag(mets),
-                                      originalObjects = cms.VInputTag(cms.InputTag('selectedPatMuons'),
-                                                                      cms.InputTag('selectedPatElectrons'),
-                                                                      #cms.InputTag('selectedPatTaus'),
-                                                                      cms.InputTag('cleanPatJets')
+                                      #originalObjects = cms.VInputTag(cms.InputTag('selectedPatMuons'),
+                                      #                                cms.InputTag('selectedPatElectrons'),
+                                      #                                #cms.InputTag('selectedPatTaus'),
+                                      #                                cms.InputTag('cleanPatJets')
+                                      #                                ),
+                                      #smearedObjects = cms.VInputTag(cms.InputTag("smearedMuonsID"+mpost),
+                                      #                               cms.InputTag("smearedElectronsID"+mpost),
+                                      #                               #cms.InputTag("smearedTausID"+mpost),
+                                      #                               cms.InputTag("smearedJets"+mpost)
+                                      #                           ),
+                                      originalObjects = cms.VInputTag(cms.InputTag(muons),
+                                                                      cms.InputTag(electrons),
+                                                                      cms.InputTag(jets)
                                                                       ),
-                                      smearedObjects = cms.VInputTag(cms.InputTag("smearedMuonsID"+mpost),
-                                                                     cms.InputTag("smearedElectronsID"+mpost),
-                                                                     #cms.InputTag("smearedTausID"+mpost),
+                                      smearedObjects = cms.VInputTag(cms.InputTag("smearedMuons"+mpost),
+                                                                     cms.InputTag("smearedElectrons"+mpost),
                                                                      cms.InputTag("smearedJets"+mpost)
                                                                  ),
                                       unclusteredScale = cms.double(1.0),

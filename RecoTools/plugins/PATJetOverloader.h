@@ -71,6 +71,12 @@ class PATJetOverloader : public edm::EDProducer {
 
 	pat::Jet jet = cands->at(l);
 
+
+        //std::cout<<"PATJetOverloader"<<
+        //             " Jet pT: "<<jet.pt()<<
+        //             " eta: "<<jet.eta()<<
+        //             " phi: "<<jet.phi()<<std::endl;
+
         // Jet Energy Corrections
         math::PtEtaPhiMLorentzVector p4_levelOne;
         math::PtEtaPhiMLorentzVector p4_levelTwo;

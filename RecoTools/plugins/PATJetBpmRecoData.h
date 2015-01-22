@@ -80,11 +80,11 @@ class PATJetBpmRecoData : public edm::EDProducer {
     Handle<reco::VertexCollection> vertices;
     bool verticesExist = iEvent.getByLabel(vertex_,vertices);
 
-    printf("Gets Here1\n");
+    //printf("Gets Here1\n");
     if(verticesExist)
       verticesExist*=(vertices->size()>0)&&(vertices->at(0).isValid());
 
-    printf("Gets Here2\n");
+    //printf("Gets Here2\n");
 
     if(iEvent.getByLabel(src_,cands)) 
       for(unsigned int  l=0;l!=cands->size();++l){
@@ -96,33 +96,33 @@ class PATJetBpmRecoData : public edm::EDProducer {
 	std::vector<reco::PFCandidatePtr> elecs;
 	std::vector<reco::PFCandidatePtr> secVertexBpm;
 	std::vector<reco::PFCandidatePtr> secVertexBpmNoD0;
-    printf("Gets Here3\n");
+    //printf("Gets Here3\n");
 
 	////adding D meson Code Here--> Take Vector of particles and loop
 	const reco::SecondaryVertexTagInfo& secVertInfo = *jet.tagInfoSecondaryVertex("secondaryVertex");
-        printf("Gets Here3.1\n");
+        //printf("Gets Here3.1\n");
         //const reco::SecondaryVertexTagInfo* secInfo = jet.tagInfoSecondaryVertex("secondaryVertex");
 	//printf("Gets Here3.1\n");
-	printf("nVert: ");
-        std::cout<<secVertInfo.nVertices()<<std::endl;
+	//printf("nVert: ");
+        //std::cout<<secVertInfo.nVertices()<<std::endl;
 	if(secVertInfo.nVertices()>0){
-        printf("Gets Here3.2\n");
+        //printf("Gets Here3.2\n");
         //if (secInfo && secInfo->vertexTracks().size()>0) {
 //std::cout<<"OOOOOOOOOOOOOOOOOOOOOOO"<<std::endl;
 	  //float pt = secVertInfo.taggingVariables().size();//
 	  //printf("track IP 2d above Charm: %f\n",pt);
 	  //const reco::Vertex&sv= secInfo->secondaryVertex(0);
 	  const reco::Vertex&sv= secVertInfo.secondaryVertex(0);
-        printf("Gets Here3.3\n");
+        //printf("Gets Here3.3\n");
 	  //float pt = secVertInfo.taggingVariables().get(TaggingVariableName(41));//
 	  //printf("number sec vertices %i\n",secVertInfo.secondaryVertex(0));
 	  if ( sv.tracksSize()>1){
-    printf("Gets Here4\n");
+    //printf("Gets Here4\n");
 	    for(reco::Vertex::trackRef_iterator track = sv.tracks_begin(); track!= sv.tracks_end(); ++track){
 	      for(unsigned int pfj=0;pfj<jet.getPFConstituents().size();++pfj) {
 		pfcand = jet.getPFConstituents().at(pfj);
 		if(pfcand.isNonnull()){
-    printf("Gets Here5\n");
+    //printf("Gets Here5\n");
 		  if(abs(pfcand->pdgId())==211&&pfcand->pt()>0.25&&pfcand->charge()!=0){ ///create charged particle collection
 		    if((*track).key() == pfcand->trackRef().key()){
 		      secVertexBpm.push_back(pfcand);
@@ -142,13 +142,13 @@ class PATJetBpmRecoData : public edm::EDProducer {
 					      0.140);
 
 	    total +=pion;
-    printf("Gets Here6\n");
+    //printf("Gets Here6\n");
 	  }
 	  jet.addUserFloat("SV_M",total.M());
 	  jet.addUserFloat("SV_pt",total.pt());
 	  jet.addUserFloat("SV_eta",total.eta());
 	  jet.addUserFloat("SV_phi",total.phi());
-    printf("Gets Here7\n");
+    //printf("Gets Here7\n");
 	}
 
 
@@ -241,14 +241,14 @@ class PATJetBpmRecoData : public edm::EDProducer {
 //	jet.addUserFloat("sec_massBpm",massBpm2);
 	/////////////
 
-    printf("Gets Here8\n");
+    //printf("Gets Here8\n");
 	jets->push_back(jet);
-    printf("Gets Here9\n");
+    //printf("Gets Here9\n");
 
       }
-    printf("Gets Here10\n");
+    //printf("Gets Here10\n");
     iEvent.put(jets);
-    printf("Gets Here11\n");
+    //printf("Gets Here11\n");
   }
   
   // ----------member data ---------------------------

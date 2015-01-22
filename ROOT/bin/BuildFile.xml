@@ -29,9 +29,13 @@
 </bin>
 <bin   name="EventWeights" file="EventWeights.cc">
 </bin>
+<bin   name="QuickEventWeightsIterative" file="QuickEventWeightsIterative.cc">
+</bin>
 <bin   name="EventWeightsIterative" file="EventWeightsIterative.cc">
 </bin>
 <bin   name="EventWeightsIterativeWJets" file="EventWeightsIterativeWJets.cc">
+</bin>
+<bin   name="QuickEventWeightsIterativeWJets" file="QuickEventWeightsIterativeWJets.cc">
 </bin>
 <bin   name="EventWeightsIterativeZJets" file="EventWeightsIterativeZJets.cc">
 </bin>

@@ -182,7 +182,7 @@ void readdir(TDirectory *dir,optutl::CommandLineParser parser,std::vector<float>
    TString string = (TString) key->GetName();
    printf("Found key=%s \n",key->GetName());
   //to run faster, take out this line when doing systematics
-  if(string == "summary")  return;
+  //if(string == "summary")  return;
   //if(string == "muNuEventTreeMuonUp")  return;
 
   TObject *obj = key->ReadObj();

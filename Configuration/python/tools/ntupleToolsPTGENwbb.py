@@ -259,6 +259,3 @@ def addMCEventTree(process,name,src="genParticles",srcMuons="dressedLeptons",src
    setattr(process, name, eventTree)
    p = cms.Path(getattr(process,name))
    setattr(process, name+'Path', p)
-
-
-

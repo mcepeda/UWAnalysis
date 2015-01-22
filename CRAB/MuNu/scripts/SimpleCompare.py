@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-Compares the shapes of variables from two data.root files
+Compares the shapes of variables from the three of us
 Author: T.M.Perry UW
 '''
 import ROOT

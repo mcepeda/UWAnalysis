@@ -34,6 +34,9 @@
 <bin name="EventWeightsIterative" file="EventWeightsIterative.cc">
 </bin>
 
+<bin name="QuickEventWeightsIterative" file="QuickEventWeightsIterative.cc">
+</bin>
+
 <bin name="EventWeightsCombined" file="EventWeightsCombined.cc">
 </bin>
 

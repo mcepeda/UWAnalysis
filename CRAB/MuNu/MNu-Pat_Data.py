@@ -6,7 +6,7 @@ process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.GlobalTag.globaltag = 'FT_53_V21_AN6::All' #new GT
 
 process.maxEvents = cms.untracked.PSet(
- input = cms.untracked.int32(-1)
+ input = cms.untracked.int32(10)
 )
 
 process.load("UWAnalysis/Configuration/2012FullJSON")
@@ -17,12 +17,12 @@ process.source.fileNames= cms.untracked.vstring(
  #'root://cmsxrootd.hep.wisc.edu//store/user/mverzett/SingleMu/Run2012A-22Jan2013-v1/AOD/Spring2014PATTuples_v2/patTuple_cfg-589969E7-646F-E211-998B-1CC1DE1CEDB2.root'
 
 # for synching
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-000A8B8E-2875-E211-BC1E-00259073E3D6.root', 
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-0012575F-4C75-E211-A333-00259073E4D6.root', 
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-001833BF-0575-E211-B2C8-E0CB4E19F9AF.root', 
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-001DD9EE-3975-E211-8FE1-90E6BA19A1FE.root', 
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-002723BE-2575-E211-A28F-90E6BA19A231.root', 
-'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-0033FBE6-0E75-E211-91C6-00259073E4BE.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-000A8B8E-2875-E211-BC1E-00259073E3D6.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-0012575F-4C75-E211-A333-00259073E4D6.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-001833BF-0575-E211-B2C8-E0CB4E19F9AF.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-001DD9EE-3975-E211-8FE1-90E6BA19A1FE.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-002723BE-2575-E211-A28F-90E6BA19A231.root', 
+#'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-0033FBE6-0E75-E211-91C6-00259073E4BE.root', 
 
 #'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-2A4B3C43-C575-E211-8960-90E6BA0D09AD.root',
 #'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-2A4BE637-F777-E211-BA8E-485B39800BB5.root',
@@ -43,6 +43,9 @@ process.source.fileNames= cms.untracked.vstring(
 #'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-2A9670CA-C875-E211-ACFC-20CF305616E1.root',
 #'root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples/patTuple_cfg-2A9B8F4B-EF77-E211-A0AA-485B39800B75.root',
 
+#'root://cmsxrootd.hep.wisc.edu//store/user/tperry/SingleMu/Run2012C-22Jan2013-v1/AOD/Spring2014PATTuples_v3/patTuple_cfg-040AE0DE-8875-E211-AF34-001EC9D8D993.root',
+'file:///afs/hep.wisc.edu/cms/tperry/FSAv2_CMSSW_5_3_14/src/FinalStateAnalysis/data_14ocbr14_2A4B3C43-C575-E211-8960-90E6BA0D09AD.root'
+#'file:///afs/hep.wisc.edu/cms/tperry/FSAv2_CMSSW_5_3_14/src/FinalStateAnalysis/data2_2A4B3C43-C575-E211-8960-90E6BA0D09AD.root'
 #'file:///afs/hep.wisc.edu/cms/tperry/FSAv2_CMSSW_5_3_14/src/FinalStateAnalysis/PatTools/test/data.root'
 )
 process.source.inputCommands=cms.untracked.vstring(
@@ -57,7 +60,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100000
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 from UWAnalysis.Configuration.tools.analysisToolsPT import *
 
-defaultReconstructionPT(process,'HLT',['HLT_IsoMu24_eta2p1_v'],
+defaultReconstructionPT(process,'HLT',
+                        ['HLT_IsoMu24_eta2p1_v','HLT_Mu40_eta2p1_v','HLT_Ele27_WP80'],
                         itsMC=False,itsData=True)
 
 process.load("UWAnalysis.Configuration.wMuNuAnalysisPT_cff")
@@ -67,7 +71,7 @@ from UWAnalysis.Configuration.tools.ntupleToolsPTwbb import *
 
 addMuNuEventTreePtData(process,'muNuEventTree')
 addEventSummary(process,True)
-process.TFileService.fileName = cms.string('Synchv4cccc_Data.root')
+process.TFileService.fileName = cms.string('data_T1Txy.root')
 
 ## makes EDM output of all collections
 #process.out = cms.OutputModule("PoolOutputModule",

@@ -3,6 +3,7 @@
 #include "Math/GenVector/VectorUtil.h" 
 
 DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuonNuPairPtJetVarFiller, "PATMuonNuPairPtJetVarFiller");
+DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATElectronNuPairPtJetVarFiller, "PATElectronNuPairPtJetVarFiller");
 //DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuTauPairPtJetVarFiller, "PATMuTauPairPtJetVarFiller");
 //DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuJetPairPtJetVarFiller, "PATMuJetPairPtJetVarFiller");
 //DEFINE_EDM_PLUGIN(NtupleFillerFactory, PATMuPairPtJetVarFiller, "PATMuPairPtJetVarFiller");

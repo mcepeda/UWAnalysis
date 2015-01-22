@@ -1,104 +1,138 @@
 #!/bin/sh
 # Author: T.M.Perry UW-Madison
-# Merges MC samples using farmout (uses mergeFiles.C)
+# Merges MC samples using farmout (uses hadd)
 
-voms-proxy-init --voms cms --valid 100:00
+#voms-proxy-init --voms cms --valid 100:00
 
-version="post_synch_v5"
-
+TTbar
 farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W1Jet-MuNuPAT_newPAT \
-   merged_${version}_W1Jet \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W2Jet-MuNuPAT_newPAT \
-   merged_${version}_W2Jet \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W3Jet_p1-MuNuPAT_newPAT \
-   merged_${version}_W3Jet_p1 \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W3Jet_p2-MuNuPAT \
-   merged_${version}_W3Jet_p2 \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W4Jet-MuNuPAT \
-   merged_${version}_W4Jet \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
-   --input-files-per-job=100 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_WJets-MuNuPAT \
-   merged_${version}_WJets \
-   $CMSSW_BASE
-
-farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_TTbar_full-MuNuPAT_newPAT \
    merged_${version}_TTbar_full \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_TTbar_semi-MuNuPAT_newPAT \
    merged_${version}_TTbar_semi \
    $CMSSW_BASE
 
+#Wbb 4Flavor
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_Wbb4F-MuNuPAT \
+   merged_${version}_Wbb4F \
+   $CMSSW_BASE
+
+#WJets
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_WJets_p1-MuNuPAT \
+   merged_${version}_WJets_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_WJets_p2-MuNuPAT \
+   merged_${version}_WJets_p2 \
+   $CMSSW_BASE
+
+#W1Jet
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W1Jet_p1-MuNuPAT \
+   merged_${version}_W1Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W1Jet_p2-MuNuPAT_newPAT \
+   merged_${version}_W1Jet_p2 \
+   $CMSSW_BASE
+
+#W2Jet
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W2Jet_p1-MuNuPAT \
+   merged_${version}_W2Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W2Jet_p2-MuNuPAT_newPAT \
+   merged_${version}_W2Jet_p2 \
+   $CMSSW_BASE
+
+#W3Jet
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W3Jet_p1-MuNuPAT \
+   merged_${version}_W3Jet_p1 \
+   $CMSSW_BASE
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W3Jet_p2-MuNuPAT_newPAT \
+   merged_${version}_W3Jet_p2 \
+   $CMSSW_BASE
+
+#W4Jet
+farmoutAnalysisJobs \
+   --merge --use-hadd \
+   --input-files-per-job=100 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_W4Jet-MuNuPAT \
+   merged_${version}_W4Jet \
+   $CMSSW_BASE
+
+
+farmoutAnalysisJobs \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_Drell-MuNuPAT_newPAT \
    merged_${version}_Drell \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_WW-MuNuPAT_newPAT \
    merged_${version}_WW \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_WZ-MuNuPAT_newPAT \
    merged_${version}_WZ \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_ZZ-MuNuPAT_newPAT \
    merged_${version}_ZZ \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_T_s-MuNuPAT_newPAT \
    merged_${version}_T_s \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_T_t-MuNuPAT_newPAT \
    merged_${version}_T_t \
@@ -112,21 +146,21 @@ farmoutAnalysisJobs \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_Tbar_s-MuNuPAT_newPAT \
    merged_${version}_Tbar_s \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_Tbar_t-MuNuPAT_newPAT \
    merged_${version}_Tbar_t \
    $CMSSW_BASE
 
 farmoutAnalysisJobs \
-   --merge \
+   --merge --use-hadd \
    --input-files-per-job=100 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/${version}_Tbar_tW-MuNuPAT_newPAT \
    merged_${version}_Tbar_tW \

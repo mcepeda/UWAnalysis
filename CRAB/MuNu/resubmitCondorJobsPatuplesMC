@@ -1,7 +1,5 @@
 #!/bin/sh
-voms-proxy-init --voms cms --valid 100:00
-
-version="post_synch_v5"
+#voms-proxy-init --voms cms --valid 100:00
 
 cat MNu-Pat_MC.py  > MuNuPAT.py
 cat CONDOR_MC.py >> MuNuPAT.py
@@ -19,77 +17,94 @@ cat CONDOR_MC.py >> MuNuPAT_newPAT.py
    ${version}_TTbar_semi $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
 
  # W Jets
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM/Spring2014PATTuples \
-   ${version}_WJets $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_WJets_p1 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_WJets_p2 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
 
  # W1 Jet
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples/ \
-   ${version}_W1Jet $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W1Jet_p1 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+ 
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W1Jet_p2 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
  # W2 Jet
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples/ \
-   ${version}_W2Jet $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W2Jet_p1 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+ 
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W2Jet_p2 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
  # W3 Jet
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTupleV2/ \
-   ${version}_W3Jet_p1 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W3Jet_p1 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTupleV2/ \
-   ${version}_W3Jet_p2 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V19-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_W3Jet_p2 $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
  # W4 Jet
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
-   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W4JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTupleV2/ \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/W4JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
    ${version}_W4Jet $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
+
+ #Wbb 4Flavor
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+   --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/tperry/WbbJetsToLNu_Massive_TuneZ2star_8TeV-madgraph-pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples_v2c \
+   ${version}_Wbb4F $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT.py
  
  # Drell
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples \
    ${version}_Drell $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
 
  # Single Top
  #tW
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2/ \
    ${version}_Tbar_tW $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2/ \
    ${version}_T_tW $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
  #tt
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TToLeptons_t-channel_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_T_t $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/TBarToLeptons_t-channel_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
   ${version}_Tbar_t $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
 
  #ts
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/T_s-channel_TuneZ2star_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_T_s $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/Tbar_s-channel_TuneZ2star_8TeV-powheg-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_Tbar_s $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
  #Diboson
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/WW_TuneZ2star_8TeV_pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_WW $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/WZ_TuneZ2star_8TeV_pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_WZ $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  
- farmoutAnalysisJobs $1 --input-files-per-job=1 --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
+ farmoutAnalysisJobs $1 --input-files-per-job=1  --memory-requirements=5000 --resubmit-failed-jobs --vsize-limit=5000 \
    --input-dir=root://cmsxrootd.hep.wisc.edu//store/user/mcepeda/ZZ_TuneZ2star_8TeV_pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM/Spring2014PATTuples2 \
    ${version}_ZZ $CMSSW_BASE $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/MuNuPAT_newPAT.py
  

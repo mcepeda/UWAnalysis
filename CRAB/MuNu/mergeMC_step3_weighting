@@ -2,36 +2,58 @@
 # Author: T.M.Perry UW-Madison
 # weights the MC samples in /$CMSSW_BASE/.../data/{version}
 
-version="post_synch_v5"
 cd $CMSSW_BASE/src/UWAnalysis/CRAB/MuNu/data/${version}
 
-EventWeightsIterativeWJets doOneD=1 weight=37509.0 histoName='summary/results' branch='weightFactor'
-echo 'WJets Are Done'
+#date +"%T"
+#QuickEventWeightsIterativeWJets  weight=36703.2 histoName='summary/results' branch='QweightFactor'
+#echo 'WJets Are Done'
+#date +"%T"
 
-EventWeightsIterative doOneD=1 outputFile='TTbar_full.root' weight=25.80    histoName='summary/results' branch="weightFactor" #245.8*0.324*0.324 
-echo 'TTbar Full'
-EventWeightsIterative doOneD=1 outputFile='TTbar_semi.root' weight=107.67    histoName='summary/results' branch="weightFactor" #245.8*0.324*0.676*2
-echo 'TTbar Semi'
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='Wbb4F.root' weight=138.9    histoName='summary/results' branch="QweightFactor" #46.3*3 
+#echo 'Wbb4F'
+#date +"%T"
 
-EventWeightsIterative doOneD=1 outputFile='Drell.root'      weight=3503.71  histoName='summary/results' branch="weightFactor"
-echo 'Drell'
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='TTbar_full.root' weight=25.257    histoName='summary/results' branch="QweightFactor" #240.6*0.324*0.324 
+#echo 'TTbar Full'
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='TTbar_semi.root' weight=105.394    histoName='summary/results' branch="QweightFactor" #240.6*0.324*0.676*2
+#echo 'TTbar Semi'
+#date +"%T"
 
-EventWeightsIterative doOneD=1 outputFile='T_t.root'        weight=18.44     histoName='summary/results' branch="weightFactor" #56.4*0.327
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='Drell.root'      weight=3503.71  histoName='summary/results' branch="QweightFactor"
+#echo 'Drell'
+#date +"%T"
+#
+date +"%T"
+QuickEventWeightsIterative  outputFile='T_t.root'        weight=18.44     histoName='summary/results' branch="QweightFactor" #56.4*0.327
 echo 'T_t'
-EventWeightsIterative doOneD=1 outputFile='Tbar_t.root'     weight=10.04     histoName='summary/results' branch="weightFactor" #30.7*0.327
+date +"%T"
+QuickEventWeightsIterative  outputFile='Tbar_t.root'     weight=10.04     histoName='summary/results' branch="QweightFactor" #30.7*0.327
 echo 'Tbar_t'
-EventWeightsIterative doOneD=1 outputFile='T_s.root'        weight=3.79     histoName='summary/results' branch="weightFactor"
+date +"%T"
+QuickEventWeightsIterative  outputFile='T_s.root'        weight=3.79     histoName='summary/results' branch="QweightFactor"
 echo 'T_s'
-EventWeightsIterative doOneD=1 outputFile='Tbar_s.root'     weight=1.76     histoName='summary/results' branch="weightFactor"
+date +"%T"
+QuickEventWeightsIterative  outputFile='Tbar_s.root'     weight=1.76     histoName='summary/results' branch="QweightFactor"
 echo 'Tbar_s'
-EventWeightsIterative doOneD=1 outputFile='T_tW.root'       weight=11.1     histoName='summary/results' branch="weightFactor"
+date +"%T"
+QuickEventWeightsIterative  outputFile='T_tW.root'       weight=11.1     histoName='summary/results' branch="QweightFactor"
 echo 'T_tW'
-EventWeightsIterative doOneD=1 outputFile='Tbar_tW.root'    weight=11.1     histoName='summary/results' branch="weightFactor"
+date +"%T"
+QuickEventWeightsIterative  outputFile='Tbar_tW.root'    weight=11.1     histoName='summary/results' branch="QweightFactor"
 echo 'Tbar_tW'
-
-EventWeightsIterative doOneD=1 outputFile='WZ.root'         weight=33.21    histoName='summary/results' branch="weightFactor"
-echo 'WZ'
-EventWeightsIterative doOneD=1 outputFile='WW.root'         weight=56.7532  histoName='summary/results' branch="weightFactor"
-echo 'WW'
-EventWeightsIterative doOneD=1 outputFile='ZZ.root'         weight=8.258    histoName='summary/results' branch="weightFactor"
-echo 'ZZ'
+date +"%T"
+#
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='WZ.root'         weight=33.21    histoName='summary/results' branch="QweightFactor"
+#echo 'WZ'
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='WW.root'         weight=56.75  histoName='summary/results' branch="QweightFactor" #56.7532
+#echo 'WW'
+#date +"%T"
+#QuickEventWeightsIterative  outputFile='ZZ.root'         weight=8.26    histoName='summary/results' branch="QweightFactor" #8.258
+#echo 'ZZ'
+#date +"%T"

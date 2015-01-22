@@ -66,6 +66,7 @@ class PtJetVarFiller : public NtupleFillerBase {
       if(handle->size()>0){
 	if(handle->at(0).jets().size()>rank_){
 	  //printf("nJets: %i\n",(int)handle->at(0).jets().size());
+	  //printf("NtupleTools/plugins/PtJetVarFiller ");
 	  //printf("%i th pt: %f\n",(int)rank_,handle->at(0).jets().at((int)rank_)->pt());
 	  singleValue = (*function)(*(handle->at(0).jets().at((int) rank_)));
 	}
@@ -149,6 +150,7 @@ class PtJetVarFiller : public NtupleFillerBase {
 #include "UWAnalysis/DataFormats/interface/CompositePtrCandidateT1T2MEt.h"
 #include "UWAnalysis/DataFormats/interface/CompositePtrCandidateTMEt.h"
 typedef PtJetVarFiller<PATMuonNuPair> PATMuonNuPairPtJetVarFiller;
+typedef PtJetVarFiller<PATElectronNuPair> PATElectronNuPairPtJetVarFiller;
 //typedef PtJetVarFiller<PATMuTauPair> PATMuTauPairPtJetVarFiller;
 //typedef PtJetVarFiller<PATMuJetPair> PATMuJetPairPtJetVarFiller;
 //typedef PtJetVarFiller<PATMuPair> PATMuPairPtJetVarFiller;

@@ -30,10 +30,15 @@ SmearedJetProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     if(iEvent.getByLabel(src_,srcH) &&srcH->size()>0) 
       for(unsigned int i=0;i<srcH->size();++i) {
 	pat::Jet object = srcH->at(i);
+
+        //std::cout<<"SmearedJetProducer I"<<
+        // " pT: "<<object.pt()<<
+        // " eta: "<<object.eta()<<
+        // " phi: "<<object.phi()<<std::endl;
 	//std::cout << " original object(" << i << "): Pt = " << object.pt() << "," 
 	//	    << " eta = " << object.eta() << ", phi = " << object.phi() << std::endl;
 
-	smearingModule->smear(object);
+	if (object.pt()>1.) {smearingModule->smear(object);}
 
 	//smear from database!
 	jecUnc->setJetEta(object.eta());

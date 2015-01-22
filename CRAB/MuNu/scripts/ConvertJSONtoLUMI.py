@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+# JSON files for 22Jan re-reco data are now available (covering runs from 190456 to 208686)
+# Golden JSON
+# /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt
+# Muon JSON
+# /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON_MuonPhys.txt
+#
+# The integrated luminosity is 19.79 and 20.65 fb-1 for Golden and Muon scenario respectively (with lumiCalc2.py of lumitype:HF, datatag:v10, normtag:HFV2c, worktag:V04-02-03)
+
 import os, re, sys, json
 
 if len(sys.argv) != 3:

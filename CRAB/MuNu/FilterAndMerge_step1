@@ -1,0 +1,99 @@
+#!/bin/sh
+# Author: T.M.Perry UW-Madison
+# Merges MC samples using farmout (uses mergeFiles.C)
+
+#voms-proxy-init --voms cms --valid 100:00
+
+#version="SV_3"
+version="post_synch_v5"
+echo $CMSSW_BASE
+rm list*txt
+if [ -f "merge*root" ]
+then
+	echo "merged rootfile(s) exist already, remove them "
+	rm merge*root
+fi
+basedir=`pwd`
+destdir=/nfs_scratch/$USER/MergedFiles_2
+if [ ! -d $destdir ]
+then
+        echo "$destdir does not exist, create it ..."
+        mkdir $destdir
+fi
+theLoop () {
+for process in $1
+do
+	rm list*txt
+	rm Filtered_1TAG_*root
+       origdir=/hdfs/store/user/$USER/${version}_${process}-$2
+       index=0
+       index_file=0
+       # First, list the rootfiles one by one,  200 per textfile
+       cd $origdir
+       for file in *root
+       do
+               echo "$file " >> $basedir/list.txt        
+       done
+       cd -
+       #Filtering!
+       sed  "s;XXXDIRXXX;$origdir/;" filterTuples/filter_v2.py > filt.py
+       python filt.py
+	#hadding
+       for file in Filtered_1TAG_*root
+       do
+               echo -n "$file " >> list_${process}_${index}.txt
+		let "index_file=index_file+1"
+               if [ ${index_file} -gt 200 ]
+               then
+                    #   sed 's/^M$//' list_${process}_${index}.txt
+                       let "index_file=0"
+                       let "index=index+1"
+               fi
+       done
+       echo "Now hadding the listed files"
+       index_file=0
+       index=0
+       # Now do a hadd, one per txtfiles
+       for file in list_${process}_*.txt
+       do
+               echo "We are in $file"
+               liste=`cat list_${process}_${index_file}.txt | sed -n 1p`
+               hadd -f $destdir/merged_${process}_${index_file}.root $liste
+               let "index_file=index_file+1"
+       done
+	hadd -f $destdir/${process}.root $destdir/merged_${process}_*.root
+	rm $destdir/merged_${process}_*.root
+       rm list_${process}_*.txt
+done
+
+}
+
+
+theLoop T_tW MuNuPAT_newPAT
+theLoop WW MuNuPAT_newPAT
+theLoop Drell MuNuPAT_newPAT
+theLoop TTbar_full MuNuPAT_newPAT
+theLoop TTbar_semi MuNuPAT_newPAT
+theLoop T_s MuNuPAT_newPAT
+theLoop T_t MuNuPAT_newPAT
+theLoop Tbar_s MuNuPAT_newPAT
+theLoop Tbar_t MuNuPAT_newPAT
+theLoop Tbar_tW MuNuPAT_newPAT
+theLoop W1Jet MuNuPAT_newPAT
+theLoop W2Jet MuNuPAT_newPAT
+theLoop W3Jet_p1 MuNuPAT_newPAT
+theLoop W3Jet_p2 MuNuPAT
+theLoop W4Jet MuNuPAT
+theLoop WJets MuNuPAT
+theLoop WZ MuNuPAT_newPAT
+theLoop ZZ MuNuPAT_newPAT
+#theLoop DY2 MuNuPAT
+#theLoop DY1 MuNuPAT
+#theLoop DY3 MuNuPAT
+#theLoop DY4 MuNuPAT
+##
+#theLoop DataA_8TeV MuNuPATDat
+#theLoop DataB_8TeV MuNuPATDat
+#theLoop DataC_8TeV MuNuPATDat
+#theLoop DataD_8TeV MuNuPATDat
+

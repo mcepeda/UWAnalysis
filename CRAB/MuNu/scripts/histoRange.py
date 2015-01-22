@@ -17,9 +17,15 @@ def ranger(leaf):
    xunits = None
 
  elif fnm.fnmatch(leaf,'*_phi*'):
-   steps = 31
-   xmin = -3.45
-   xmax = 5.85
+  # steps = 24
+  # xmin = -3.14159
+  # xmax = 3.14159
+   #steps = 31
+   #xmin = -3.45
+   #xmax = 5.85
+   steps = 35
+   xmin = -3.4033
+   xmax = 5.7594
    xtitle = leaf
    xunits = None
 
@@ -59,9 +65,14 @@ def ranger(leaf):
    xunits = None
    setLogY = True
 
- elif leaf=='mt':
-   steps =20 
-   xmin = 4.
+ elif fnm.fnmatch(leaf,'mt*'):
+   # Andrea
+   #steps = 20
+   #xmin = 45.
+   #xmax = 205.
+   steps = 16 
+   #steps = 24 
+   xmin = 0.
    xmax = 240.
    xtitle = 'Transverse Mass'
    xunits = 'GeV'
@@ -80,6 +91,13 @@ def ranger(leaf):
    xtitle = 'Nr. Vertices'
    xunits = None
 
+ elif leaf == 'DiMuonPt':
+   steps = 100
+   xmin = 0.
+   xmax = 200.
+   xtitle = 'p_{T}^{#mu#mu}'
+   xunits = 'GeV'
+
  elif leaf == 'DiMuonMass':
    steps = 100
    xmin = 0.
@@ -88,17 +106,27 @@ def ranger(leaf):
    xunits = 'GeV'
 
  elif leaf == 'ht':
-   steps = 50
+   steps = 20 
+   #steps = 25 
+   #steps = 50
    xmin = 50.
-   xmax = 400.
+   xmax = 550.
+   #xmax = 400.
    xtitle = 'h_{T}'
    xunits = 'GeV'
 
- elif fnm.fnmatch(leaf,'mJ*J*'):
+ elif leaf == 'mJJ':
+   steps = 25
+   xmin = 0.
+   xmax = 500.
+   xtitle = 'm^{JJ}'
+   xunits = 'GeV'
+
+ elif fnm.fnmatch(leaf,'mJ3J4'):
    steps = 15
    xmin = 20.
    xmax = 170.
-   xtitle = 'm^{JJ}'
+   xtitle = 'm^{J3J4}'
    xunits = 'GeV'
 
  elif leaf == 'ptJJ':

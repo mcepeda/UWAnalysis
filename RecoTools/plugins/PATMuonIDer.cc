@@ -54,16 +54,33 @@ void PATMuonIDer::produce( edm::Event& evt, const edm::EventSetup& es )
 
     for ( size_t i = 0; i < muons->size(); ++i )
     {
-        double looseID = 0.;
-        pat::Muon muon = muons->at(i);
-//        std::cout<<"isPF: "<<muon.isPFMuon()<<std::endl;
-//        std::cout<<"isGlobal: "<<muon.isGlobalMuon()<<std::endl;
-//        std::cout<<"isTracker: "<<muon.isTrackerMuon()<<std::endl;
-        if(muon.isPFMuon()){
-         if(muon.isGlobalMuon() || muon.isTrackerMuon()){
-           looseID = 1.;
-         }
+       double looseID = 0.;
+       pat::Muon muon = muons->at(i);
+//       std::cout<<"isPF: "<<muon.isPFMuon()<<std::endl;
+//       std::cout<<"isGlobal: "<<muon.isGlobalMuon()<<std::endl;
+//       std::cout<<"isTracker: "<<muon.isTrackerMuon()<<std::endl;
+       if(muon.isPFMuon()){
+        if(muon.isGlobalMuon() || muon.isTrackerMuon()){
+          looseID = 1.;
         }
+       }
+        
+//       double tightIDtom = 0.;
+//       if(muon.isGlobalMuon() && muon.isPFMuon()){
+//        if(muon.globalTrack.normalizedChi2() < 10){
+//         if(muon.track.hitPattern.trackerLayersWithMeasurement() > 5){
+//          if(muon.globalTrack.hitPattern.numberOfValidMuonHits() > 0){
+//           if(muon.innerTrack.hitPattern.numberOfValidPixelHits() > 0){
+//            if(abs(muon.dB()) < 0.2){
+//             if(muon.numberOfMatchedStations() > 1){
+//              tightID = 1.;
+//             }
+//            }
+//           }
+//          }
+//         }
+//        }
+//        muon.addUserFloat("tightIDtom",tightIDtom);
         muon.addUserFloat("looseID",looseID);
         out->push_back(muon);
     }

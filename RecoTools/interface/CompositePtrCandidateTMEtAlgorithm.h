@@ -132,7 +132,8 @@ class CompositePtrCandidateTMEtAlgorithm
 //        } 
 //
 //      }
-      if((reco::deltaR(pfJets.at(i)->p4(),visDecayProducts->p4())>0.5)&&fabs(pfJets.at(i)->userFloat("idLoose"))>0&&fabs(pfJets.at(i)->eta())<4.5&&pfJets.at(i)->pt()>20){
+      if(2>1){
+      //if((reco::deltaR(pfJets.at(i)->p4(),visDecayProducts->p4())>0.5)&&fabs(pfJets.at(i)->userFloat("idLoose"))>0&&fabs(pfJets.at(i)->eta())<4.5&&pfJets.at(i)->pt()>20){
       //if((reco::deltaR(pfJets.at(i)->p4(),visDecayProducts->p4())>0.5)&&fabs(pfJets.at(i)->userFloat("idLoose"))>0&&fabs(pfJets.at(i)->eta())<2.4){
 	cleanedJets.push_back(pfJets.at(i));
       }

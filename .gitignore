@@ -8,6 +8,7 @@
 !./CRAB/MuNu/plots/Datacards_*root
 *.log
 !./CRAB/MuNu/plots/Datacards_*log
+*.out
 
 .todo
 *.png
