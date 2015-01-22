@@ -806,6 +806,7 @@ def applyDefaultSelectionsPT(process,jets,muons,electrons):
       'passConversionVeto &&' \
       'gsfTrack.trackerExpectedHitsInner.numberOfHits < 1'
   #electronIso = '(chargedHadronIso + max((neutralHadronIso + photonIso - 0.5*puChargedHadronIso),0.0))/et'
+  #electronIso = 'userFloat("Iso04")'
   electronIso = 'userFloat("Iso03")'
   electronLooseIso = electronIso+' < 0.15'
   electronTightIso = electronIso+' < 0.10 '
@@ -835,8 +836,8 @@ def applyDefaultSelectionsPT(process,jets,muons,electrons):
   )
   process.goodElectrons = cms.EDFilter("PATElectronSelector",
    src = cms.InputTag( electrons ),
-   #cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronTightIso,electronTightID)),
-   cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronTightIso,electronTightID)),
+   cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronTightIso,electronTightID)),
+   #cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronTightIso,electronTightID)),
    filter = cms.bool(False),
   )
   process.vetoMuons = cms.EDFilter("PATMuonSelector",
@@ -856,8 +857,8 @@ def applyDefaultSelectionsPT(process,jets,muons,electrons):
   )
   process.qcdElectrons = cms.EDFilter("PATElectronSelector",
    src = cms.InputTag( electrons ),
-   #cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronAntiIso,electronTightID)),
-   cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronAntiIso,electronTightID)),
+   cut = cms.string('pt>30 && abs(eta)<2.1 && %s && %s'%(electronAntiIso,electronTightID)),
+   #cut = cms.string('pt>30 && ( abs(eta)<1.4442 || ( abs(eta)>1.566 && abs(eta)<2.1 ) ) && %s && %s'%(electronAntiIso,electronTightID)),
    filter = cms.bool(False),
   )
 

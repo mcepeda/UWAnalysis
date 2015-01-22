@@ -144,11 +144,13 @@ def makeGoodLeptons(srcGoodMuons='smearedGoodMuons',srcGoodElectrons='smearedGoo
       goodMu_pt_vec = makeMuon("goodMu_pt_vec","pt",sourceMuons=srcGoodMuons,lo=False),
       goodMu_eta_vec = makeMuon("goodMu_eta_vec","eta",sourceMuons=srcGoodMuons,lo=False),
       goodMu_phi_vec = makeMuon("goodMu_phi_vec","phi",sourceMuons=srcGoodMuons,lo=False),
+      goodMu_mass_vec = makeMuon("goodMu_mass_vec","mass",sourceMuons=srcGoodMuons,lo=False),
       goodMu_charge_vec = makeMuon("goodMu_charge_vec","charge",sourceMuons=srcGoodMuons,lo=False),
 
       goodEle_pt_vec = makeElectron("goodEle_pt_vec","pt",sourceElectrons=srcGoodElectrons,lo=False),
       goodEle_eta_vec = makeElectron("goodEle_eta_vec","eta",sourceElectrons=srcGoodElectrons,lo=False),
       goodEle_phi_vec = makeElectron("goodEle_phi_vec","phi",sourceElectrons=srcGoodElectrons,lo=False),
+      goodEle_mass_vec = makeElectron("goodEle_mass_vec","mass",sourceElectrons=srcGoodElectrons,lo=False),
       goodEle_charge_vec = makeElectron("goodEle_charge_vec","charge",sourceElectrons=srcGoodElectrons,lo=False),
       goodEle_Iso03_vec = makeElectron("goodEle_Iso03_vec",'userFloat("Iso03")',sourceElectrons=srcGoodElectrons,lo=False),
       goodEle_Iso04_vec = makeElectron("goodEle_Iso04_vec",'userFloat("Iso04")',sourceElectrons=srcGoodElectrons,lo=False),
@@ -259,6 +261,10 @@ def makeGoodJetKinematics(srcGoodJets="smearedGoodJets"):
      goodJ2_phi = makeJetList(strName='phi',methodName='phi()',pf='good',xn='',sourceJets=srcGoodJets)[1],
      goodJ3_phi = makeJetList(strName='phi',methodName='phi()',pf='good',xn='',sourceJets=srcGoodJets)[2],
      goodJ4_phi = makeJetList(strName='phi',methodName='phi()',pf='good',xn='',sourceJets=srcGoodJets)[3],
+     goodJ1_mass = makeJetList(strName='mass',methodName='mass()',pf='good',xn='',sourceJets=srcGoodJets)[0],
+     goodJ2_mass = makeJetList(strName='mass',methodName='mass()',pf='good',xn='',sourceJets=srcGoodJets)[1],
+     goodJ3_mass = makeJetList(strName='mass',methodName='mass()',pf='good',xn='',sourceJets=srcGoodJets)[2],
+     goodJ4_mass = makeJetList(strName='mass',methodName='mass()',pf='good',xn='',sourceJets=srcGoodJets)[3],
   )
   return goodJetKinematics
 
@@ -276,6 +282,10 @@ def makeFwdJetKinematics(srcFwdJets="smearedFwdJets"):
      fwdJ2_phi = makeJetList(strName='phi',methodName='phi()',pf='fwd',xn='',sourceJets=srcFwdJets)[1],
      #fwdJ3_phi = makeJetList(strName='phi',methodName='phi()',pf='fwd',xn='',sourceJets=srcFwdJets)[2],
      #fwdJ4_phi = makeJetList(strName='phi',methodName='phi()',pf='fwd',xn='',sourceJets=srcFwdJets)[3],
+     fwdJ1_mass = makeJetList(strName='mass',methodName='mass()',pf='fwd',xn='',sourceJets=srcFwdJets)[0],
+     fwdJ2_mass = makeJetList(strName='mass',methodName='mass()',pf='fwd',xn='',sourceJets=srcFwdJets)[1],
+     #fwdJ3_mass = makeJetList(strName='mass',methodName='mass()',pf='fwd',xn='',sourceJets=srcFwdJets)[2],
+     #fwdJ4_mass = makeJetList(strName='mass',methodName='mass()',pf='fwd',xn='',sourceJets=srcFwdJets)[3],
   )
   return fwdJetKinematics
 
@@ -695,7 +705,7 @@ def addEventTreeData(process,name,
      #makeCleanJetKinematics(srcCleanJets=srcCJet),
      #makeAllJetKinematics(srcAllJets=srcAJet),
      makeCSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
-     #makeSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
+     makeSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
      #makeAltBTags(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
      makeMETobjects(srcGoodElectrons=srcGEle,srcQCDElectrons=srcQEle,
                   srcGoodMuons=srcGMu,srcQCDMuons=srcQMu,srcMET='wgtPUembedMET'),
@@ -749,7 +759,7 @@ def addEventTreeMC(process,name,
      #makeCleanJetKinematics(srcCleanJets=srcCJet),
      #makeAllJetKinematics(srcAllJets=srcAJet),
      makeCSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
-     #makeSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
+     makeSVJets(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
      #makeAltBTags(srcGoodJets=srcGJet,srcFwdJets=srcFJet),
      makeMETobjects(srcGoodElectrons=srcGEle,srcQCDElectrons=srcQEle,
                   srcGoodMuons=srcGMu,srcQCDMuons=srcQMu,srcMET='wgtPUembedMET'),
